@@ -10,6 +10,7 @@ See the [arXiv preprint](https://arxiv.org/abs/1703.07402) for more information.
 ## Installation
 
 First, clone the repository and install dependencies:
+
 ```
 git clone https://github.com/nwojke/deep_sort.git
 cd deep_sort
@@ -19,16 +20,19 @@ cd deep_sort
 # existing detections, you can use pip install -r requirements.txt instead.
 pip install -r requirements-gpu.txt
 ```
+
 Then, download pre-generated detections and the CNN checkpoint file from
 [here](https://drive.google.com/open?id=18fKzfqnqhqW3s9zwsCbnVJ5XF2JFeqMp).
 
 *NOTE:* The candidate object locations of our pre-generated detections are
 taken from the following paper:
+
 ```
 F. Yu, W. Li, Q. Li, Y. Liu, X. Shi, J. Yan. POI: Multiple Object Tracking with
 High Performance Detection and Appearance Feature. In BMTT, SenseTime Group
 Limited, 2016.
 ```
+
 We have replaced the appearance descriptor with a custom deep convolutional
 neural network (see below).
 
@@ -39,6 +43,7 @@ The following example starts the tracker on one of the
 sequences.
 We assume resources have been extracted to the repository root directory and
 the MOT16 benchmark data is in `./MOT16`:
+
 ```
 python deep_sort_app.py \
     --sequence_dir=./MOT16/test/MOT16-06 \
@@ -47,6 +52,7 @@ python deep_sort_app.py \
     --nn_budget=100 \
     --display=True
 ```
+
 Check `python deep_sort_app.py -h` for an overview of available options.
 There are also scripts in the repository to visualize results, generate videos,
 and evaluate the MOT challenge benchmark.
@@ -59,15 +65,19 @@ appearance of pedestrian bounding boxes using cosine similarity.
 The following example generates these features from standard MOT challenge
 detections. Again, we assume resources have been extracted to the repository
 root directory and MOT16 data is in `./MOT16`:
+
 ```
 python tools/generate_detections.py \
     --model=resources/networks/mars-small128.pb \
     --mot_dir=./MOT16/train \
     --output_dir=./resources/detections/MOT16_train
 ```
+
 The model has been generated with TensorFlow 1.5. If you run into
 incompatibility, re-export the frozen inference graph to obtain a new
 `mars-small128.pb` that is compatible with your version:
+
+
 ```
 python tools/freeze_model.py
 ```
