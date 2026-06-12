@@ -43,7 +43,7 @@ def gather_sequence_info(sequence_dir, detection_file):
     image_dir = os.path.join(sequence_dir, "img1")
     image_filenames = {
         int(os.path.splitext(f)[0]): os.path.join(image_dir, f)
-        for f in os.listdir(image_dir)}
+        for f in os.listdir(image_dir) if not f.startswith('.')}
     groundtruth_file = os.path.join(sequence_dir, "gt/gt.txt")
 
     detections = None

@@ -44,6 +44,8 @@ if __name__ == "__main__":
     os.makedirs(args.output_dir, exist_ok=True)
     sequences = os.listdir(args.mot_dir)
     for sequence in sequences:
+        if sequence.startswith('.'):
+            continue
         print("Running sequence %s" % sequence)
         sequence_dir = os.path.join(args.mot_dir, sequence)
         detection_file = os.path.join(args.detection_dir, "%s.npy" % sequence)
