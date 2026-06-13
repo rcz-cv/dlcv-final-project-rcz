@@ -33,12 +33,15 @@ pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim 
 
 As of 20260612 the resource files are available on Google Drive [here](https://drive.google.com/open?id=18fKzfqnqhqW3s9zwsCbnVJ5XF2JFeqMp)
 
-Move the unzipped folders into:
+Move the unzipped network folder into resources. The detections will be created by us below.
 
 ```
 resources/
     detections/
+        mars-small128/
     networks/
+        mars-small128/
+            mars-small*
 ```
 
 Also copy the MOT16 benchmark data from [Kaggle](https://www.kaggle.com/datasets/takshmandar/mot16-dataset) into:
@@ -47,6 +50,8 @@ Also copy the MOT16 benchmark data from [Kaggle](https://www.kaggle.com/datasets
 data/
 	MOT16/
 ```
+
+And actually that's no longer necessary.
 
 ### Smoke Test
 
@@ -64,22 +69,26 @@ python deep_sort_app.py \
 ### Create Detections
 
 The following example generates person re-identification features from standard MOT challenge
-detections:
+detections. We apply it to our new videos:
 
 ```
 python tools/generate_detections.py \
-    --model=resources/networks/mars-small128.pb \
-    --mot_dir=./data/MOT16/train \
-    --output_dir=./resources/detections/MOT16_train
+    --model resources/networks/mars-small128/mars-small128.pb \
+    --mot_dir videos \
+    --output_dir resources/detections/mars-small128/DLCV
 ```
 
-#### After creating detections you can run the tracker against them:
+#### After creating detections, run the tracker against them:
 
 ```
-python deep_sort_app.py \
-    --sequence_dir=./data/MOT16/train/MOT16-04 \
-    --detection_file=./resources/detections/MOT16_train/MOT16-04.npy \
-    --min_confidence=0.3 \
-    --nn_budget=100 \
-    --display=True
+for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; do
+    python deep_sort_app.py \
+        --sequence_dir="videos/${VIDEO}" \
+        --detection_file="resources/detections/mars-small128/DLCV/${VIDEO}.npy" \
+        --output_file="eval/trackers/DLCV/DLCV-train/deep_sort_baseline/data/${VIDEO}.txt"
+done
 ```
+
+## Evaluating the tracker
+
+bash track_eval.sh

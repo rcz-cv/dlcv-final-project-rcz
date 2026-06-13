@@ -79,6 +79,7 @@ celerybeat-schedule
 .env
 
 # virtualenv
+.venv/
 venv/
 ENV/
 
@@ -89,11 +90,11 @@ ENV/
 .ropeproject
 
 # MacOS Nonsense
-/.DS_Store
+.DS_Store
 /.venv/bin/f2py
 
 # Project
 data/
-.venv/
-
+eval/gt/
 resources/
+/videos/
