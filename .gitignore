@@ -97,3 +97,5 @@ data/
 eval/gt/
 resources/
 /videos/
+/detections/original
+/external

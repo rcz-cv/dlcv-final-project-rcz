@@ -164,7 +164,7 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
     results = []
 
     def frame_callback(vis, frame_idx):
-        print("Processing frame %05d" % frame_idx)
+        print("Processing frame %05d\r" % frame_idx, end="")
 
         # Load image and generate detections.
         detections = create_detections(
@@ -204,6 +204,7 @@ def run(sequence_dir, detection_file, output_file, min_confidence,
     else:
         visualizer = visualization.NoVisualization(seq_info)
     visualizer.run(frame_callback)
+    print("")
 
     # Store results.
     f = open(output_file, 'w')

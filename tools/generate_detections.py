@@ -166,7 +166,7 @@ def generate_detections(encoder, mot_dir, output_dir, detection_dir=None):
         min_frame_idx = frame_indices.astype(np.int64).min()
         max_frame_idx = frame_indices.astype(np.int64).max()
         for frame_idx in range(min_frame_idx, max_frame_idx + 1):
-            print("Frame %05d/%05d" % (frame_idx, max_frame_idx))
+            print("Frame %05d/%05d\r" % (frame_idx, max_frame_idx), end="")
             mask = frame_indices == frame_idx
             rows = detections_in[mask]
 
@@ -179,6 +179,7 @@ def generate_detections(encoder, mot_dir, output_dir, detection_dir=None):
             detections_out += [np.r_[(row, feature)] for row, feature
                                in zip(rows, features)]
 
+        print("")
         output_filename = os.path.join(output_dir, "%s.npy" % sequence)
         np.save(
             output_filename, np.asarray(detections_out), allow_pickle=False)

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# setup_eval.sh
+# setup_videos.sh
 #
-# This script populates the eval folder with symlinks to the video datasets,
-# allowing them to be be downloaded (and git-ignored) here in videos.
+# This script populates the detections and eval folder with symlinks to the
+# video datasets after they are downloaded to the videos/ folder.
 #
-# Usage: bash ./videos/setup_eval.sh
+# Usage: bash ./videos/setup_videos.sh
 #
 
 set -euo pipefail
@@ -22,11 +22,54 @@ VIDEOS=(
     "TUD-Stadtmitte"
 )
 
+##################################
+# Populate "detections/"
+##################################
+
+echo "Populating detections directory structure..."
+
+DET_ROOT="detections"
+
+mkdir -p "${DET_ROOT}/original"
+
+for VIDEO in "${VIDEOS[@]}"; do
+    echo "Setting up detections for ${VIDEO}..."
+
+    VIDEO_DIR="videos/${VIDEO}"
+
+    if [[ ! -d "${VIDEO_DIR}" ]]; then
+        echo "ERROR: ${VIDEO_DIR} not found"
+        exit 1
+    fi
+
+    if [[ ! -f "${VIDEO_DIR}/det/det.txt" ]]; then
+        echo "ERROR: ${VIDEO_DIR}/det/det.txt not found"
+        exit 1
+    fi
+
+    DET_VIDEO_DIR="${DET_ROOT}/original/${VIDEO}"
+
+    mkdir -p "${DET_VIDEO_DIR}"
+
+    #
+    # Create symlink to det folder
+    #
+    ln -snf \
+        "$(realpath "${VIDEO_DIR}/det")" \
+        "${DET_VIDEO_DIR}/det"
+
+done
+
+
+##################################
+# Populate "eval/"
+##################################
+
+echo "Populating eval directory structure..."
+
 TRACKERS=(
     "deep_sort_baseline"
 )
-
-echo "Populating eval directory structure..."
 
 GT_ROOT="eval/gt/DLCV"
 TRACKER_ROOT="eval/trackers/DLCV/${SPLIT}"
@@ -43,7 +86,7 @@ SEQMAP="${GT_ROOT}/seqmaps/${SPLIT}.txt"
 echo "name" > "${SEQMAP}"
 
 for VIDEO in "${VIDEOS[@]}"; do
-    echo "Setting up ${VIDEO}..."
+    echo "Setting up eval for ${VIDEO}..."
 
     VIDEO_DIR="videos/${VIDEO}"
 

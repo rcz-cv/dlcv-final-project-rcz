@@ -41,7 +41,7 @@ def run(sequence_dir, result_file, show_false_alarms=False, detection_file=None,
         raise ValueError("No groundtruth available. Cannot show false alarms.")
 
     def frame_callback(vis, frame_idx):
-        print("Frame idx", frame_idx)
+        print("Frame idx\r", frame_idx, end="")
         image = cv2.imread(
             seq_info["image_filenames"][frame_idx], cv2.IMREAD_COLOR)
 

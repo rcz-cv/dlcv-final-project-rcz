@@ -27,6 +27,9 @@ pip install numpy opencv-python scipy tensorflow tf-slim tf-keras
 ### AppleSilicon
 pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim tf-keras
 
+### For yolov5:
+pip install torch
+
 ```
 
 ### Install resources
@@ -101,3 +104,32 @@ bash track_eval.sh
         --detection_file="resources/detections/mars-small128/DLCV/${VIDEO}.npy" \
         --result_file="eval/trackers/DLCV/DLCV-train/deep_sort_baseline/data/${VIDEO}.txt"
 )
+
+
+## Create detections from yolov5
+
+python tools/generate_mot_detections.py \
+    --model yolov5 \
+    --video_dir videos \
+    --output_dir detections
+
+### Make REID features from yolov5 detections
+
+```
+python tools/generate_detections.py \
+    --model resources/networks/mars-small128/mars-small128.pb \
+    --mot_dir videos \
+    --detection_dir detections/yolov5m \
+    --output_dir resources/detections/mars-small128/yolov5m
+```
+
+#### After creating yolov5 REID features, run the tracker against them:
+
+```
+for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; do
+    python deep_sort_app.py \
+        --sequence_dir="videos/${VIDEO}" \
+        --detection_file="resources/detections/mars-small128/yolov5m/${VIDEO}.npy" \
+        --output_file="eval/trackers/DLCV/DLCV-train/yolov5m/data/${VIDEO}.txt"
+done
+```
