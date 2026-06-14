@@ -92,3 +92,12 @@ done
 ## Evaluating the tracker
 
 bash track_eval.sh
+
+## show results
+
+(export VIDEO="TUD-Stadtmitte";
+    python show_results.py \
+        --sequence_dir="videos/${VIDEO}" \
+        --detection_file="resources/detections/mars-small128/DLCV/${VIDEO}.npy" \
+        --result_file="eval/trackers/DLCV/DLCV-train/deep_sort_baseline/data/${VIDEO}.txt"
+)
