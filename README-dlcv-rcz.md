@@ -183,3 +183,10 @@ for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; d
         --output_file="eval/trackers/DLCV/DLCV-train/mars-nanodet-plus-m-416/data/${VIDEO}.txt"
 done
 ```
+
+### Draw detections
+
+python tools/draw_detections \
+    --images videos/KITTI-17/img1 \
+    --detections videos/KITTI-17/det/det.txt \
+    --frame 1

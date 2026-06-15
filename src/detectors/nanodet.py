@@ -43,7 +43,7 @@ class NanoDetDetector:
     model_name: str = "nanodet-plus-m_416"
     repo_path: str = "external/nanodet"
     model_path: str = "resources/networks/nanodet/nanodet-plus-m_416.pth"
-    confidence_threshold: float = 0.35
+    confidence_threshold: float = 0.45
     device: str | None = None
 
     def __post_init__(self) -> None:
