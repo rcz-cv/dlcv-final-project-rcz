@@ -115,10 +115,7 @@ bash track_eval.sh
 
 ## Create detections from yolov5
 
-python tools/generate_mot_detections.py \
-    --model yolov5 \
-    --video_dir videos \
-    --output_dir detections
+bash tools/gen_mot_yolov5.sh
 
 ### Make REID features from yolov5 detections
 
@@ -158,5 +155,31 @@ for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; d
         --sequence_dir="videos/${VIDEO}" \
         --detection_file="resources/detections/osnet_x1_0/yolov5m/${VIDEO}.npy" \
         --output_file="eval/trackers/DLCV/DLCV-train/osnet1_0-yolov5m/data/${VIDEO}.txt"
+done
+```
+
+## Create detections from nanodet
+
+bash tools/gen_mot_nanodet.sh
+
+### Make REID features from nanodet detections
+
+```
+python tools/generate_detections.py \
+    --encoder mars \
+    --model_path resources/networks/mars-small128/mars-small128.pb \
+    --mot_dir videos \
+    --detection_dir detections/nanodet-plus-m-416 \
+    --output_dir resources/detections/mars-small128/nanodet-plus-m-416
+```
+
+#### After creating nanodet REID features, run the tracker against them:
+
+```
+for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; do
+    python deep_sort_app.py \
+        --sequence_dir="videos/${VIDEO}" \
+        --detection_file="resources/detections/mars-small128/nanodet-plus-m-416/${VIDEO}.npy" \
+        --output_file="eval/trackers/DLCV/DLCV-train/mars-nanodet-plus-m-416/data/${VIDEO}.txt"
 done
 ```

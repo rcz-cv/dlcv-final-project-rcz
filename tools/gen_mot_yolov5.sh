@@ -65,7 +65,7 @@ PYTHONPATH="${PROJECT_ROOT}" \
     --video_dir "${VIDEO_DIR}" \
     --output_dir "${OUTPUT_DIR}" \
     --model "${MODEL}" \
-    --yolov5_dir "${YOLOV5_DIR}"
+    --repo_path "${YOLOV5_DIR}"
 
 echo "Done."
 echo "Detections written to:"

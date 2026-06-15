@@ -252,7 +252,7 @@ def parse_args():
         help="Name of the Re-ID encoder to use, e.g. 'mars' or 'osnet_x1_0'")
     parser.add_argument(
         "--model_path",
-        default="resources/networks/mars-small128.pb",
+        default="resources/networks/mars-small128/mars-small128.pb",
         help="Path to freezed inference graph protobuf.")
     parser.add_argument(
         "--mot_dir", help="Path to MOTChallenge directory (train or test)",

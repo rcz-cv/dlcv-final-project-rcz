@@ -26,7 +26,7 @@ class YOLOv5Detector:
     """
 
     model_name: str = "yolov5m"
-    yolov5_dir: str = "external/yolov5"
+    repo_path: str = "external/yolov5"
     confidence_threshold: float = 0.25
     iou_threshold: float = 0.45
     device: str | None = None
@@ -42,7 +42,7 @@ class YOLOv5Detector:
                 self.device = "cpu"
 
         self.model = torch.hub.load(
-            self.yolov5_dir,
+            self.repo_path,
             self.model_name,
             source="local",
             pretrained=True,

@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
         "${workspaceFolder}/src",
-        "${workspaceFolder}/external/deep-person-reid"
+        "${workspaceFolder}/external/deep-person-reid",
+        "${workspaceFolder}/external/nanodet"
     ]
 }

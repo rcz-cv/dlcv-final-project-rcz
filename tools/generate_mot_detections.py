@@ -54,7 +54,7 @@ def write_mot_row(f, frame_idx, track_id, x, y, w, h, confidence):
         f"{confidence:.6f},-1,-1,-1\n"
     )
 
-def generate_mot_detections(model_name, video_dir, output_dir, yolov5_dir):
+def generate_mot_detections(model_name, video_dir, output_dir, repo_path, model_path):
     """Generate MOT-format detections from the images in the video datasets.
 
     Parameters
@@ -82,7 +82,8 @@ def generate_mot_detections(model_name, video_dir, output_dir, yolov5_dir):
 
     detector = detectors.create_detector(
         model_name,
-        yolov5_dir=yolov5_dir
+        repo_path=repo_path,
+        model_path=model_path
     )
 
     sequences = sorted(
@@ -154,13 +155,15 @@ def parse_args():
         "--output_dir", help="Output directory.", default="detections",
         required=True)
     parser.add_argument(
-        "--yolov5_dir", help="Location of ylov5 repo.", default="external/yolov5",
+        "--repo_path", help="Location of external model repo.",
         required=True)
+    parser.add_argument(
+        "--model_path", help="Location of external model repo.", default=None)
     return parser.parse_args()
 
 def main():
     args = parse_args()
-    generate_mot_detections(args.model, args.video_dir, args.output_dir, args.yolov5_dir)
+    generate_mot_detections(args.model, args.video_dir, args.output_dir, args.repo_path, args.model_path)
 
 if __name__ == "__main__":
     main()
