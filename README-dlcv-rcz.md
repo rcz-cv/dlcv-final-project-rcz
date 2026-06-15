@@ -32,6 +32,13 @@ pip install torch
 
 ```
 
+### Python needed for deep-person-reid (OSNet)
+
+```
+pip install torch torchvision torchreid yacs gdown scipy opencv-python tensorboard
+```
+
+
 ### Install resources
 
 As of 20260612 the resource files are available on Google Drive [here](https://drive.google.com/open?id=18fKzfqnqhqW3s9zwsCbnVJ5XF2JFeqMp)
@@ -131,5 +138,25 @@ for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; d
         --sequence_dir="videos/${VIDEO}" \
         --detection_file="resources/detections/mars-small128/yolov5m/${VIDEO}.npy" \
         --output_file="eval/trackers/DLCV/DLCV-train/yolov5m/data/${VIDEO}.txt"
+done
+```
+
+### Make REID features from yolov5 detections with OSNet
+
+```
+python tools/generate_detections.py \
+    --encoder osnet_x1_0 \
+    --model_path resources/networks/osnet/osnet_x1_0_market1501.pth \
+    --mot_dir videos \
+    --detection_dir detections/yolov5m \
+    --output_dir resources/detections/osnet_x1_0/yolov5m
+```
+
+```
+for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; do
+    python deep_sort_app.py \
+        --sequence_dir="videos/${VIDEO}" \
+        --detection_file="resources/detections/osnet_x1_0/yolov5m/${VIDEO}.npy" \
+        --output_file="eval/trackers/DLCV/DLCV-train/osnet1_0-yolov5m/data/${VIDEO}.txt"
 done
 ```

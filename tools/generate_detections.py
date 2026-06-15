@@ -68,7 +68,7 @@ def extract_image_patch(image, bbox, patch_shape):
     return image
 
 
-class ImageEncoder(object):
+class MarsImageEncoder(object):
 
     def __init__(self, checkpoint_filename, input_name="images",
                  output_name="features"):
@@ -96,9 +96,66 @@ class ImageEncoder(object):
         return out
 
 
-def create_box_encoder(model_filename, input_name="images",
-                       output_name="features", batch_size=32):
-    image_encoder = ImageEncoder(model_filename, input_name, output_name)
+class OSNetImageEncoder(object):
+    def __init__(self,
+        model_name,
+        model_path,
+        device="cpu",
+        image_shape=(256, 128),
+        feature_dim=512):
+        from pathlib import Path
+        PROJECT_ROOT = Path(__file__).resolve().parent.parent
+        import sys
+        sys.path.insert(0, str(PROJECT_ROOT / "external" / "deep-person-reid"))
+        from torchreid.utils import FeatureExtractor
+
+        self.feature_dim = feature_dim
+        self.extractor = FeatureExtractor(
+            model_name=model_name,
+            model_path=model_path,
+            device=device,
+        )
+        self.image_shape = image_shape
+
+    def __call__(self, data_x, batch_size=32):
+        if len(data_x) == 0:
+            return np.zeros((0, self.feature_dim), np.float32)
+
+        out = np.zeros((len(data_x), self.feature_dim), np.float32)
+
+        for start in range(0, len(data_x), batch_size):
+            end = min(start + batch_size, len(data_x))
+
+            batch = []
+            for patch in data_x[start:end]:
+                if patch.ndim != 3:
+                    raise ValueError(f"OSNetImageEncoder: expected HxWxC patch, got {patch.shape}")
+                rgb_patch = cv2.cvtColor(patch, cv2.COLOR_BGR2RGB)
+                batch.append(rgb_patch)
+
+            features = self.extractor(batch)
+            if hasattr(features, "detach"):
+                features = features.detach().cpu().numpy()
+            out[start:end] = features.astype(np.float32)
+
+        return out
+
+def create_box_encoder(encoder_name, model_path, batch_size=32):
+    from torch import cuda,backends
+
+    device = (
+        "cuda" if cuda.is_available()
+        else "mps" if backends.mps.is_available()
+        else "cpu"
+    )
+    if encoder_name == "mars":
+        image_encoder = MarsImageEncoder(model_path, input_name="images", output_name="features")
+    elif encoder_name.startswith("osnet"):
+        image_encoder = OSNetImageEncoder(encoder_name, model_path, device=device)
+    else:
+        raise ValueError(
+            "Unknown encoder name '%s'" % encoder_name)
+
     image_shape = image_encoder.image_shape
 
     def encoder(image, boxes):
@@ -188,9 +245,13 @@ def generate_detections(encoder, mot_dir, output_dir, detection_dir=None):
 def parse_args():
     """Parse command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Re-ID feature extractor")
+    parser = argparse.ArgumentParser(description="Re-ID feature extractor", allow_abbrev=False)
     parser.add_argument(
-        "--model",
+        "--encoder",
+        default="mars",
+        help="Name of the Re-ID encoder to use, e.g. 'mars' or 'osnet_x1_0'")
+    parser.add_argument(
+        "--model_path",
         default="resources/networks/mars-small128.pb",
         help="Path to freezed inference graph protobuf.")
     parser.add_argument(
@@ -208,7 +269,7 @@ def parse_args():
 
 def main():
     args = parse_args()
-    encoder = create_box_encoder(args.model, batch_size=32)
+    encoder = create_box_encoder(args.encoder, args.model_path, batch_size=32)
     generate_detections(encoder, args.mot_dir, args.output_dir,
                         args.detection_dir)
 

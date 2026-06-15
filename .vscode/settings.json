@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "${workspaceFolder}/src"
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/external/deep-person-reid"
     ]
 }

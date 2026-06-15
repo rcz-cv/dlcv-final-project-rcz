@@ -11,7 +11,7 @@ set -euo pipefail
 PROJECT_ROOT="$(pwd)"
 
 #TRACKER_NAME="deep_sort_baseline"
-TRACKER_NAME="yolov5m"
+TRACKER_NAME="osnet1_0-yolov5m"
 
 (
     cd ../TrackEval

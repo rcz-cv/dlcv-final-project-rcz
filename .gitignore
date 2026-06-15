@@ -88,14 +88,17 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# MacOS Nonsense
+# MacOS nonsense
 .DS_Store
-/.venv/bin/f2py
 
 # Project
 data/
 eval/gt/
-resources/
 /videos/
 /detections/original
 /external
+
+# Cached external data
+resources/*/
+!networks
+/test.py
