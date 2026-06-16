@@ -65,8 +65,9 @@ The following example generates person re-identification features from standard 
 detections. We apply it to our new videos:
 
 ```
-python tools/generate_detections.py \
+python Closet/tools/generate_detections.py \
     --model resources/networks/mars-small128/mars-small128.pb \
+    --detection_dir detections/yolov5mu.pt-mars/
     --mot_dir videos \
     --output_dir resources/detections/mars-small128/DLCV
 ```
@@ -97,8 +98,8 @@ bash track_eval.sh
 
 ### Run online tracker
 
-python run_tracker.py \                   
-    --sequence_dir=./videos/MOT16-09/ \
+python run_tracker.py \
+    --sequence_dir=./videos/MOT16-09 \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display=True
@@ -108,3 +109,26 @@ python run_tracker.py \
 python run_motchallenge.py \
     --min_confidence=0.3 \
     --nn_budget=100
+
+### Create offline REID from online detections
+
+```
+python Closet/tools/generate_detections.py \
+    --model resources/networks/mars-small128/mars-small128.pb \
+    --detection_dir detections/yolov5mu.pt-mars \
+    --mot_dir videos \
+    --output_dir resources/detections/mars-small128/yolov5mu.pt-mars-off
+```
+
+#### After creating detections, run the tracker against them:
+
+```
+for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; do
+    python Closet/deep_sort_app.py \
+        --sequence_dir="videos/${VIDEO}" \
+        --detection_file="resources/detections/mars-small128/yolov5mu.pt-mars-off/${VIDEO}.npy" \
+        --output_file="eval/trackers/DLCV/DLCV-train/yolov5mu.pt-mars-off/data/${VIDEO}.txt"
+done
+```
+
+###

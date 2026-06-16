@@ -36,7 +36,7 @@ def extract_image_patch(
     patch_shape: tuple[int, int],
 ) -> np.ndarray | None:
     """Extract image patch from bbox in TLWH format: x, y, w, h."""
-    bbox = np.asarray(bbox, dtype=np.float32).copy()
+    bbox = np.array(bbox)
 
     target_aspect = float(patch_shape[1]) / patch_shape[0]
     new_width = target_aspect * bbox[3]
@@ -134,7 +134,12 @@ class MarsReid:
             )
 
             if patch is None:
-                continue
+                print(f"WARNING: Failed to extract image patch: {detection.tlwh}")
+                patch = np.random.uniform(
+                    0.0,
+                    255.0,
+                    self.image_shape,
+                ).astype(np.uint8)
 
             patches.append(patch)
             valid_detections.append(detection)

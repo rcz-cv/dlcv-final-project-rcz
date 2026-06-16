@@ -1,0 +1,100 @@
+
+Eval Config:
+USE_PARALLEL         : False                         
+NUM_PARALLEL_CORES   : 8                             
+BREAK_ON_ERROR       : True                          
+RETURN_ON_ERROR      : False                         
+LOG_ON_ERROR         : /Users/richardz/projects/hse/cv/dlcv/week6/TrackEval/error_log.txt
+PRINT_RESULTS        : True                          
+PRINT_ONLY_COMBINED  : False                         
+PRINT_CONFIG         : True                          
+TIME_PROGRESS        : True                          
+DISPLAY_LESS_PROGRESS : False                         
+OUTPUT_SUMMARY       : True                          
+OUTPUT_EMPTY_CLASSES : True                          
+OUTPUT_DETAILED      : True                          
+PLOT_CURVES          : True                          
+
+MotChallenge2DBox Config:
+PRINT_CONFIG         : True                          
+GT_FOLDER            : /Users/richardz/projects/hse/cv/dlcv/week6/dlcv-final-project-rcz-online/eval/gt/DLCV
+TRACKERS_FOLDER      : /Users/richardz/projects/hse/cv/dlcv/week6/dlcv-final-project-rcz-online/eval/trackers/DLCV
+OUTPUT_FOLDER        : None                          
+TRACKERS_TO_EVAL     : ['yolov5mu.pt-mars']          
+CLASSES_TO_EVAL      : ['pedestrian']                
+BENCHMARK            : DLCV                          
+SPLIT_TO_EVAL        : train                         
+INPUT_AS_ZIP         : False                         
+DO_PREPROC           : False                         
+TRACKER_SUB_FOLDER   : data                          
+OUTPUT_SUB_FOLDER    :                               
+TRACKER_DISPLAY_NAMES : None                          
+SEQMAP_FOLDER        : None                          
+SEQMAP_FILE          : None                          
+SEQ_INFO             : None                          
+GT_LOC_FORMAT        : {gt_folder}/{seq}/gt/gt.txt   
+SKIP_SPLIT_FOL       : False                         
+
+Evaluating 1 tracker(s) on 6 sequence(s) for 1 class(es) on MotChallenge2DBox dataset using the following metrics: HOTA, Count
+
+
+Evaluating yolov5mu.pt-mars
+
+    MotChallenge2DBox.get_raw_seq_data(yolov5mu.pt-mars, KITTI-17)         0.0088 sec
+    MotChallenge2DBox.get_preprocessed_seq_data(pedestrian)                0.0082 sec
+    HOTA.eval_sequence()                                                   0.0173 sec
+    Count.eval_sequence()                                                  0.0000 sec
+1 eval_sequence(KITTI-17, yolov5mu.pt-mars)                              0.0346 sec
+    MotChallenge2DBox.get_raw_seq_data(yolov5mu.pt-mars, MOT16-09)         0.0470 sec
+    MotChallenge2DBox.get_preprocessed_seq_data(pedestrian)                0.0275 sec
+    HOTA.eval_sequence()                                                   0.0652 sec
+    Count.eval_sequence()                                                  0.0000 sec
+2 eval_sequence(MOT16-09, yolov5mu.pt-mars)                              0.1408 sec
+    MotChallenge2DBox.get_raw_seq_data(yolov5mu.pt-mars, MOT16-11)         0.0604 sec
+    MotChallenge2DBox.get_preprocessed_seq_data(pedestrian)                0.0476 sec
+    HOTA.eval_sequence()                                                   0.1146 sec
+    Count.eval_sequence()                                                  0.0000 sec
+3 eval_sequence(MOT16-11, yolov5mu.pt-mars)                              0.2250 sec
+    MotChallenge2DBox.get_raw_seq_data(yolov5mu.pt-mars, PETS09-S2L1)      0.0438 sec
+    MotChallenge2DBox.get_preprocessed_seq_data(pedestrian)                0.0399 sec
+    HOTA.eval_sequence()                                                   0.0929 sec
+    Count.eval_sequence()                                                  0.0000 sec
+4 eval_sequence(PETS09-S2L1, yolov5mu.pt-mars)                           0.1784 sec
+    MotChallenge2DBox.get_raw_seq_data(yolov5mu.pt-mars, TUD-Campus)       0.0041 sec
+    MotChallenge2DBox.get_preprocessed_seq_data(pedestrian)                0.0035 sec
+    HOTA.eval_sequence()                                                   0.0086 sec
+    Count.eval_sequence()                                                  0.0000 sec
+5 eval_sequence(TUD-Campus, yolov5mu.pt-mars)                            0.0165 sec
+    MotChallenge2DBox.get_raw_seq_data(yolov5mu.pt-mars, TUD-Stadtmitte)   0.0099 sec
+    MotChallenge2DBox.get_preprocessed_seq_data(pedestrian)                0.0094 sec
+    HOTA.eval_sequence()                                                   0.0219 sec
+    Count.eval_sequence()                                                  0.0000 sec
+6 eval_sequence(TUD-Stadtmitte, yolov5mu.pt-mars)                        0.0417 sec
+
+All sequences for yolov5mu.pt-mars finished in 0.64 seconds
+
+HOTA: yolov5mu.pt-mars-pedestrian  HOTA      DetA      AssA      DetRe     DetPr     AssRe     AssPr     LocA      OWTA      HOTA(0)   LocA(0)   HOTALocA(0)
+KITTI-17                           51.171    45.45     57.63     69.723    51.371    63.891    74.939    80.956    63.347    68.405    76.354    52.23     
+MOT16-09                           47.277    49.204    45.667    59.769    66.428    50.653    76.803    82.613    52.217    61.661    77.045    47.506    
+MOT16-11                           50.669    50.798    50.837    58.982    71.697    55.614    82.25     83.899    54.73     65.174    77.451    50.478    
+PETS09-S2L1                        60.09     64.676    55.9      74.407    70.786    64.207    70.873    80.037    64.469    81.783    75.512    61.756    
+TUD-Campus                         50.082    49.598    50.659    65.694    58.813    58.438    71.165    80.023    57.681    68.026    74.836    50.909    
+TUD-Stadtmitte                     58.846    61.272    56.652    66.231    74.478    65.158    70.456    79.923    61.241    79.444    75.246    59.779    
+COMBINED                           52.616    53.448    52.139    63.308    69.093    58.291    78.037    82.234    57.404    69.074    76.65     52.946    
+
+Count: yolov5mu.pt-mars-pedestrian Dets      GT_Dets   IDs       GT_IDs    
+KITTI-17                           927       683       27        9         
+MOT16-09                           4730      5257      61        25        
+MOT16-11                           7547      9174      119       69        
+PETS09-S2L1                        4705      4476      30        19        
+TUD-Campus                         401       359       15        8         
+TUD-Stadtmitte                     1028      1156      16        10        
+COMBINED                           19338     21105     268       140       
+
+Timing analysis:
+MotChallenge2DBox.get_raw_seq_data                                     0.1741 sec
+MotChallenge2DBox.get_preprocessed_seq_data                            0.1361 sec
+HOTA.eval_sequence                                                     0.3204 sec
+Count.eval_sequence                                                    0.0000 sec
+eval_sequence                                                          0.6370 sec
+Evaluator.evaluate                                                     1.2727 sec

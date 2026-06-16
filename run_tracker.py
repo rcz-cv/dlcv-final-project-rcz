@@ -131,7 +131,7 @@ def run(sequence_dir, suffix, min_confidence,
     tracker = Tracker(metric)
     results = []
 
-    detector = detectors.create_detector("yolov5mu.pt",
+    detector = detectors.create_detector("yolo26m.pt",
         min_confidence=min_confidence,
         min_detection_height=min_detection_height)
     reid = reids.create_reid_detector("mars")
@@ -142,7 +142,6 @@ def run(sequence_dir, suffix, min_confidence,
     sequence_name = Path(sequence_dir).name
     output_dir = Path(__file__).resolve().parent / \
         "eval" / "trackers" / "DLCV" / "DLCV-train" / tracker_name / "data"
-    
     output_dir.mkdir(parents=True, exist_ok=True)
     output_file = str(output_dir / sequence_name) + ".txt"
 
@@ -163,7 +162,6 @@ def run(sequence_dir, suffix, min_confidence,
 
         detections = detector.detect(frame)
         detections = reid.reid(frame, detections)
-        tracker.update(detections)
 
         # Run non-maximum suppression.
         boxes = np.array([d.tlwh for d in detections])
@@ -201,7 +199,6 @@ def run(sequence_dir, suffix, min_confidence,
             vis.set_image(image.copy())
             vis.draw_detections(detections)
             vis.draw_trackers(tracker.tracks)
-
 
         # Store results.
         for track in tracker.tracks:
