@@ -22,10 +22,13 @@ Python 3.12.12
 pip install --upgrade pip 
 
 ### x86/CUDA
-pip install numpy opencv-python scipy tensorflow tf-slim tf-keras
+pip install numpy opencv-python scipy tensorflow tf-slim tf-keras torch
 
 ### AppleSilicon
-pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim tf-keras
+pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim tf-keras torch
+
+### Ultralytics
+pip install ultralytics
 
 ```
 
@@ -44,23 +47,14 @@ resources/
             mars-small*
 ```
 
-Also copy the MOT16 benchmark data from [Kaggle](https://www.kaggle.com/datasets/takshmandar/mot16-dataset) into:
-
-```
-data/
-	MOT16/
-```
-
-And actually that's no longer necessary.
-
 ### Smoke Test
 
 The following example runs the tracker against one of the MOT16 sequences:
 
 ```
-python deep_sort_app.py \
-    --sequence_dir=./data/MOT16/test/MOT16-06 \
-    --detection_file=./resources/detections/MOT16_POI_test/MOT16-06.npy \
+python run_tracker.py \
+    --sequence_dir=./videos/MOT16-09/ \
+    --detection_file=./resources/detections/mars-small128/original/MOT16-09.npy \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display=True

@@ -90,10 +90,10 @@ ENV/
 
 # MacOS Nonsense
 .DS_Store
-/.venv/bin/f2py
 
 # Project
 data/
 eval/gt/
 resources/
 /videos/
+/venv_offline/
