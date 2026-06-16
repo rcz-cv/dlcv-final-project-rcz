@@ -1,7 +1,7 @@
 # vim: expandtab:ts=4:sw=4
 import argparse
 import os
-import deep_sort_app
+import run_tracker
 
 
 def parse_args():
@@ -9,14 +9,8 @@ def parse_args():
     """
     parser = argparse.ArgumentParser(description="MOTChallenge evaluation")
     parser.add_argument(
-        "--mot_dir", help="Path to MOTChallenge directory (train or test)",
-        required=True)
-    parser.add_argument(
-        "--detection_dir", help="Path to detections.", default="detections",
-        required=True)
-    parser.add_argument(
-        "--output_dir", help="Folder in which the results will be stored. Will "
-        "be created if it does not exist.", default="results")
+        "--suffix", help="Added to tracker results directory name.",
+        default="")
     parser.add_argument(
         "--min_confidence", help="Detection confidence threshold. Disregard "
         "all detections that have a confidence lower than this value. Set to "
@@ -41,16 +35,14 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
 
-    os.makedirs(args.output_dir, exist_ok=True)
-    sequences = os.listdir(args.mot_dir)
+    mot_dir = "videos"
+    sequences = os.listdir(mot_dir)
     for sequence in sequences:
         if sequence.startswith('.'):
             continue
         print("Running sequence %s" % sequence)
-        sequence_dir = os.path.join(args.mot_dir, sequence)
-        detection_file = os.path.join(args.detection_dir, "%s.npy" % sequence)
-        output_file = os.path.join(args.output_dir, "%s.txt" % sequence)
-        deep_sort_app.run(
-            sequence_dir, detection_file, output_file, args.min_confidence,
+        sequence_dir = os.path.join(mot_dir, sequence)
+        run_tracker.run(
+            sequence_dir, args.suffix, args.min_confidence,
             args.nms_max_overlap, args.min_detection_height,
             args.max_cosine_distance, args.nn_budget, display=False)

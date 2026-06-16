@@ -312,7 +312,7 @@ class ImageViewer(object):
                 self._caption, cv2.resize(self.image, self._window_shape[:2]))
             key = cv2.waitKey(remaining_time)
             if key & 255 == 27:  # ESC
-                print("terminating")
+                print("\nterminating")
                 self._terminate = True
             elif key & 255 == 32:  # ' '
                 print("toggeling pause: " + str(not is_paused))

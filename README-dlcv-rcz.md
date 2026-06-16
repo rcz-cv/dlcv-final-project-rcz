@@ -54,7 +54,6 @@ The following example runs the tracker against one of the MOT16 sequences:
 ```
 python run_tracker.py \
     --sequence_dir=./videos/MOT16-09/ \
-    --detection_file=./resources/detections/mars-small128/original/MOT16-09.npy \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display=True
@@ -95,3 +94,17 @@ bash track_eval.sh
         --detection_file="resources/detections/mars-small128/DLCV/${VIDEO}.npy" \
         --result_file="eval/trackers/DLCV/DLCV-train/deep_sort_baseline/data/${VIDEO}.txt"
 )
+
+### Run online tracker
+
+python run_tracker.py \                   
+    --sequence_dir=./videos/MOT16-09/ \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display=True
+
+### Run mot challenge
+
+python run_motchallenge.py \
+    --min_confidence=0.3 \
+    --nn_budget=100

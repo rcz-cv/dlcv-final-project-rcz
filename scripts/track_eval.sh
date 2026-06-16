@@ -4,7 +4,13 @@
 # track_eval.sh
 #
 
+if [ -z "$1" ]; then
+    echo "Usage: $0 <tracker-name>"
+    exit 1
+fi
+
 PROJECT_ROOT="$(pwd)"
+TRACKER_NAME="$1"
 
 (
     cd ../TrackEval
@@ -14,7 +20,7 @@ PROJECT_ROOT="$(pwd)"
         --TRACKERS_FOLDER "${PROJECT_ROOT}/eval/trackers/DLCV" \
         --BENCHMARK DLCV \
         --SPLIT_TO_EVAL train \
-        --TRACKERS_TO_EVAL deep_sort_baseline \
+        --TRACKERS_TO_EVAL "${TRACKER_NAME}" \
         --DO_PREPROC False \
         --METRICS HOTA
-) 2>&1 | tee eval/logs/trackeval_deep_sort_baseline_hota.log
+) 2>&1 | tee "eval/logs/trackeval_${TRACKER_NAME}_hota.log"
