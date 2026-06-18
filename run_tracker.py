@@ -1,6 +1,7 @@
 # vim: expandtab:ts=4:sw=4
 """
 run_tracker.py
+
 Run our version of the DeepSORT tracker.
 """
 
@@ -49,7 +50,6 @@ def gather_sequence_info(sequence_dir):
         * image_size: Image size (height, width).
         * min_frame_idx: Index of the first frame.
         * max_frame_idx: Index of the last frame.
-
     """
     image_dir = os.path.join(sequence_dir, "img1")
     image_filenames = {
@@ -83,69 +83,93 @@ def gather_sequence_info(sequence_dir):
     seq_info = {
         "sequence_name": os.path.basename(sequence_dir),
         "image_filenames": image_filenames,
-        "detections": 0,
         "groundtruth": groundtruth,
         "image_size": image_size,
         "min_frame_idx": min_frame_idx,
         "max_frame_idx": max_frame_idx,
-        "feature_dim": 0,
         "update_ms": update_ms
     }
     return seq_info
 
-def run(sequence_dir, suffix, min_confidence,
-        nms_max_overlap, min_detection_height, max_cosine_distance,
-        nn_budget, display):
+
+def make_output_dir(output_dir):
+    """
+    Validate path to "eval/trackers/DLCV/DLCV-train/<tracker-name>/data/"
+    and then ensure the directory exists.
+    """
+    OUTPUT_DIR_ROOT = Path("eval/trackers/DLCV/DLCV-train").resolve()
+    candidate = Path(output_dir).resolve()
+    try:
+        rel = candidate.relative_to(OUTPUT_DIR_ROOT)
+    except ValueError:
+        raise ValueError(
+            f"Output directory must be under {OUTPUT_DIR_ROOT}"
+        )
+    parts = rel.parts
+    if len(parts) != 2 or parts[1] != "data":
+        raise ValueError(
+            "Output directory must have form "
+            "'eval/trackers/DLCV/DLCV-train/<tracker-name>/data'"
+        )
+    candidate.mkdir(parents=True, exist_ok=True)
+
+
+def run(sequence_dir, output_dir, detector_name, reid_name,
+        min_confidence, max_cosine_distance, nn_budget, max_age, 
+        mask, display, nms_max_overlap, min_detection_height):
     """
     Run multi-target tracker on a particular sequence.
 
     Parameters
     ----------
     sequence_dir : str
-        Path to the MOTChallenge sequence directory.
-    suffix : str
-        Added to the output directory name for storing results.
+        Path to the MOTChallenge sequence directory, i.e. the videos
+    output_dir : str
+        Path to the output directory
+    detector : str
+        Name of the detector model
+    reid : str
+        Name of the reid model
     min_confidence : float
         Detection confidence threshold. Disregard all detections that have
         a confidence lower than this value.
-    nms_max_overlap: float
-        Maximum detection overlap (non-maximum suppression threshold).
-    min_detection_height : int
-        Detection height threshold. Disregard all detections that have
-        a height lower than this value.
     max_cosine_distance : float
         Gating threshold for cosine distance metric (object appearance).
     nn_budget : Optional[int]
         Maximum size of the appearance descriptor gallery. If None, no budget
         is enforced.
+    max_age : int
+        Gating threshold for cosine distance metric (object appearance).
+    mask : boolean
+        Specify to apply the segmentation mask (if any) before ReID.
     display : bool
         If True, show visualization of intermediate tracking results.
 
-    """
+    Legacy Parameters
+    -----------------
+    nms_max_overlap: float
+        Maximum detection overlap (non-maximum suppression threshold).
+    min_detection_height : int
+        Detection height threshold. Disregard all detections that have
+        a height lower than this value.
 
-    print("initializing tracker...")
+    """
 
     seq_info = gather_sequence_info(sequence_dir)
     metric = nn_matching.NearestNeighborDistanceMetric(
         "cosine", max_cosine_distance, nn_budget)
-    tracker = Tracker(metric)
+    tracker = Tracker(metric, max_age=max_age)
     results = []
 
-    detector = detectors.create_detector("yolo26m.pt",
+    detector = detectors.create_detector(detector_name,
         min_confidence=min_confidence,
         min_detection_height=min_detection_height)
-    reid = reids.create_reid_detector("mars")
+    reid = reids.create_reid_detector(reid_name, use_detection_mask=mask)
 
-    if suffix != "":
-        suffix = "-" + suffix
-    tracker_name = detector.name + "-" + reid.name + suffix
     sequence_name = Path(sequence_dir).name
-    output_dir = Path(__file__).resolve().parent / \
-        "eval" / "trackers" / "DLCV" / "DLCV-train" / tracker_name / "data"
-    output_dir.mkdir(parents=True, exist_ok=True)
-    output_file = str(output_dir / sequence_name) + ".txt"
 
-    print("tracker name:", tracker_name)
+    make_output_dir(output_dir)
+    output_file = str(Path(output_dir) / sequence_name) + ".txt"
 
     prev_time = time.perf_counter()
     fps = 0.0
@@ -232,24 +256,27 @@ def bool_string(input_string):
 def parse_args():
     """ Parse command line arguments.
     """
-    parser = argparse.ArgumentParser(description="Deep SORT")
+    if len(sys.argv) == 1:
+        usage=argparse.SUPPRESS
+    else:
+        usage=None
+    parser = argparse.ArgumentParser(description="Deep SORT", usage=usage)
     parser.add_argument(
         "--sequence_dir", help="Path to MOTChallenge sequence directory",
-        default=None, required=True)
+        default=False, required=True)
     parser.add_argument(
-        "--suffix", help="Added to tracker results directory name.",
-        default="")
+        "--output_dir", help="Path to output directory",
+        default=False, required=True)
+    parser.add_argument(
+        "--detector", help="Detector model to use.",
+        default="yolo26m")
+    parser.add_argument(
+        "--reid", help="ReID model to use.",
+        default="mars")
     parser.add_argument(
         "--min_confidence", help="Detection confidence threshold. Disregard "
         "all detections that have a confidence lower than this value.",
         default=0.8, type=float)
-    parser.add_argument(
-        "--min_detection_height", help="Threshold on the detection bounding "
-        "box height. Detections with height smaller than this value are "
-        "disregarded", default=0, type=int)
-    parser.add_argument(
-        "--nms_max_overlap",  help="Non-maximum suppression threshold: Maximum "
-        "detection overlap.", default=1.0, type=float)
     parser.add_argument(
         "--max_cosine_distance", help="Gating threshold for cosine distance "
         "metric (object appearance).", type=float, default=0.2)
@@ -257,14 +284,34 @@ def parse_args():
         "--nn_budget", help="Maximum size of the appearance descriptors "
         "gallery. If None, no budget is enforced.", type=int, default=None)
     parser.add_argument(
+        "--max_age", help="How many frames a track can go unmatched before "
+        "it is deleted. If None, the default is 30.", type=int, default=30)
+    parser.add_argument(
+        "--mask", help="Apply mask before ReID for segmentation detectors",
+        default=False, type=bool_string)
+    parser.add_argument(
         "--display", help="Show intermediate tracking results",
         default=True, type=bool_string)
+
+    # legacy parameters
+    parser.add_argument(
+        "--min_detection_height", help="Threshold on the detection bounding "
+        "box height. Detections with height smaller than this value are "
+        "disregarded", default=0, type=int)
+    parser.add_argument(
+        "--nms_max_overlap",  help="Non-maximum suppression threshold: Maximum "
+        "detection overlap.", default=1.0, type=float)
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
+
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
     run(
-        args.sequence_dir, args.suffix,
-        args.min_confidence, args.nms_max_overlap, args.min_detection_height,
-        args.max_cosine_distance, args.nn_budget, args.display)
+        args.sequence_dir, args.output_dir, args.detector, args.reid,
+        args.min_confidence, args.max_cosine_distance, args.nn_budget, args.max_age,
+        args.mask, args.display, args.nms_max_overlap, args.min_detection_height)

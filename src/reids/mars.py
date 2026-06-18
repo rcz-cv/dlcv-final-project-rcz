@@ -34,6 +34,7 @@ def extract_image_patch(
     image: np.ndarray,
     bbox: np.ndarray,
     patch_shape: tuple[int, int],
+    mask: np.ndarray | None = None,
 ) -> np.ndarray | None:
     """Extract image patch from bbox in TLWH format: x, y, w, h."""
     bbox = np.array(bbox)
@@ -55,8 +56,22 @@ def extract_image_patch(
         return None
 
     sx, sy, ex, ey = bbox
+
     patch = image[sy:ey, sx:ex]
-    return cv2.resize(patch, tuple(patch_shape[::-1]))
+    patch = cv2.resize(patch, tuple(patch_shape[::-1]))
+
+    if mask is not None:
+        mask_patch = mask[sy:ey, sx:ex]
+        mask_patch = cv2.resize(
+            mask_patch.astype(np.float32),
+            tuple(patch_shape[::-1]),
+            interpolation=cv2.INTER_LINEAR,
+        )
+
+        patch = patch.copy()
+        patch[mask_patch < 0.5] = 0
+
+    return patch
 
 
 class ImageEncoder:
@@ -98,6 +113,7 @@ class MarsReid:
     batch_size: int = 32
     input_name: str = "images"
     output_name: str = "features"
+    use_detection_mask: bool = False
 
     def __post_init__(self) -> None:
         self.encoder = ImageEncoder(
@@ -131,6 +147,7 @@ class MarsReid:
                 image,
                 detection.tlwh,
                 tuple(self.image_shape[:2]),
+                mask=detection.mask if self.use_detection_mask else None,
             )
 
             if patch is None:

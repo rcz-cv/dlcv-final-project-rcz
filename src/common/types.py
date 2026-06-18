@@ -19,6 +19,7 @@ class Detection:
     confidence: float
     class_id: int
     feature: np.ndarray | None = None
+    mask: np.ndarray | None = None
 
     @property
     def tlwh(self) -> np.ndarray:

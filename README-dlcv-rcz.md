@@ -131,4 +131,10 @@ for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; d
 done
 ```
 
-###
+### Created a complete execution/compare script
+
+e.g.
+
+```
+bash run_eval.sh --tracker yolov5mu-mars-mc35 --detector yolov5mu --min_confidence 0.35
+```

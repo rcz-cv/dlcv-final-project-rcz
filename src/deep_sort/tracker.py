@@ -15,6 +15,9 @@ class Tracker:
     ----------
     metric : nn_matching.NearestNeighborDistanceMetric
         A distance metric for measurement-to-track association.
+    max_iou_distance: float
+        If leftover detection overlaps a leftover track by less than this
+        then, then it can be matched.
     max_age : int
         Maximum number of missed misses before a track is deleted.
     n_init : int
@@ -22,14 +25,8 @@ class Tracker:
         track state is set to `Deleted` if a miss occurs within the first
         `n_init` frames.
 
-    Attributes
-    ----------
-    metric : nn_matching.NearestNeighborDistanceMetric
-        The distance metric used for measurement to track association.
-    max_age : int
-        Maximum number of missed misses before a track is deleted.
-    n_init : int
-        Number of frames that a track remains in initialization phase.
+    Additional Attributes
+    ---------------------
     kf : kalman_filter.KalmanFilter
         A Kalman filter to filter target trajectories in image space.
     tracks : List[Track]

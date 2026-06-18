@@ -58,6 +58,7 @@ class YOLOdetector:
             source=bgr_image,
             conf = self.min_confidence,
             iou = self.iou_threshold,
+            classes=[PERSON_ID],
             device = self.device,
             verbose=False
         )
