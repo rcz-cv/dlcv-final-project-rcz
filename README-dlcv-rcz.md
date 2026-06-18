@@ -131,6 +131,22 @@ for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; d
 done
 ```
 
+### Run Tracker with osnet
+
+```
+python run_tracker.py \
+    --sequence_dir=./videos/MOT16-09 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/yolo26m-osnet_x1_0/data \
+    --detector=yolo26m \
+    --reid=osnet_x1_0 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display=True
+
+bash run_eval.sh --tracker yolo26m-osnet_x1_0 --detector yolov5mu --reid osnet_x1_0 --min_confidence 0.35
+
+```
+
 ### Created a complete execution/compare script
 
 e.g.
@@ -138,3 +154,4 @@ e.g.
 ```
 bash run_eval.sh --tracker yolov5mu-mars-mc35 --detector yolov5mu --min_confidence 0.35
 ```
+
