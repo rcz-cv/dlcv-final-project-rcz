@@ -12,19 +12,9 @@ import sys
 
 import cv2
 import numpy as np
+import torch
 
 from common.types import Detection
-
-
-def _default_device() -> str:
-    """Pick the best available torch device for OSNet inference."""
-    from torch import backends, cuda
-
-    if cuda.is_available():
-        return "cuda"
-    if backends.mps.is_available():
-        return "mps"
-    return "cpu"
 
 
 def extract_image_patch(
@@ -75,20 +65,15 @@ class OSNetImageEncoder:
     def __init__(
         self,
         model_name: str,
-        model_path: str,
-        device: str = "cpu",
+        device: str,
         image_shape: tuple[int, int] = (256, 128),
         feature_dim: int = 512,
-        torchreid_root: str | Path | None = None,
     ) -> None:
-        if torchreid_root is None:
-            project_root = Path(__file__).resolve().parent.parent.parent
-            torchreid_root = project_root / "external" / "deep-person-reid"
-
+        project_root = Path(__file__).resolve().parent.parent.parent
+        torchreid_root = project_root / "external" / "deep-person-reid"
         torchreid_root = Path(torchreid_root)
         if str(torchreid_root) not in sys.path:
             sys.path.insert(0, str(torchreid_root))
-        print("torchreid_root:", str(torchreid_root))
 
         from torchreid.utils import FeatureExtractor
 
@@ -96,7 +81,6 @@ class OSNetImageEncoder:
         self.image_shape = image_shape
         self.extractor = FeatureExtractor(
             model_name=model_name,
-            model_path=model_path,
             device=device,
         )
 
@@ -131,23 +115,22 @@ class OSNetImageEncoder:
 
 @dataclass
 class OsnetReid:
-    model_filename: str = "resources/networks/osnet_x1_0_market1501.pth.tar"
     model_name: str | None = None
-    batch_size: int = 32
-    device: str | None = None
-    image_shape: tuple[int, int] = (256, 128)
-    feature_dim: int = 512
     use_detection_mask: bool | None = None
-    torchreid_root: str | Path | None = None
+    device: str | None = None
 
     def __post_init__(self) -> None:
+        if self.device is None:
+            if torch.cuda.is_available():
+                self.device = "cuda"
+            elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+                self.device = "mps"
+            else:
+                self.device = "cpu"
+
         self.encoder = OSNetImageEncoder(
             model_name=self.model_name,
-            model_path=self.model_filename,
-            device=self.device or _default_device(),
-            image_shape=self.image_shape,
-            feature_dim=self.feature_dim,
-            torchreid_root=self.torchreid_root,
+            device=self.device,
         )
         self.image_shape = self.encoder.image_shape
 
@@ -193,8 +176,7 @@ class OsnetReid:
             return []
 
         features = self.encoder(
-            np.asarray(patches),
-            batch_size=self.batch_size,
+            np.asarray(patches)
         )
 
         for detection, feature in zip(valid_detections, features):
