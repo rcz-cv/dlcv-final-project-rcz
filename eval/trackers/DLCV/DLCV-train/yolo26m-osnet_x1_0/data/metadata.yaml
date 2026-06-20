@@ -1,12 +1,12 @@
-created: '2026-06-20T10:30:59Z'
+created: '2026-06-20T11:33:19Z'
 git:
-  commit: 4a116d8
+  commit: 35c929e
   dirty: true
 parameters:
   detector: yolov5mu
   reid: osnet_x1_0
-  min_confidence: 0.35
-  max_cosine_distance: 0.2
+  min_confidence: 0.3
+  max_cosine_distance: 0.4
   nn_budget: 100
   max_age: 30
   mask: false
@@ -15,28 +15,28 @@ parameters:
   nms_max_overlap: 1.0
 sequences:
   KITTI-17:
-    fps: 15.537550271632158
-    updated: '2026-06-20T10:30:59Z'
-    hota: 53.63305087015702
+    fps: 15.299895853679743
+    updated: '2026-06-20T11:33:19Z'
+    hota: 49.711858934081256
   MOT16-09:
-    fps: 9.593204479925454
-    updated: '2026-06-20T10:32:01Z'
-    hota: 43.539839676167894
+    fps: 8.504015601524998
+    updated: '2026-06-20T11:34:25Z'
+    hota: 42.20790939467734
   MOT16-11:
-    fps: 9.931877851304233
-    updated: '2026-06-20T10:33:44Z'
-    hota: 50.412913423741436
+    fps: 8.47406408807529
+    updated: '2026-06-20T11:36:16Z'
+    hota: 45.577844755411974
   PETS09-S2L1:
-    fps: 9.897389048496574
-    updated: '2026-06-20T10:35:00Z'
-    hota: 59.90464418752587
+    fps: 10.178231132595148
+    updated: '2026-06-20T11:37:34Z'
+    hota: 59.52876771821859
   TUD-Campus:
-    fps: 15.145753218175912
-    updated: '2026-06-20T10:35:05Z'
-    hota: 47.940100386710064
+    fps: 12.106574622796558
+    updated: '2026-06-20T11:37:39Z'
+    hota: 51.82329666089007
   TUD-Stadtmitte:
-    fps: 9.291718610341476
-    updated: '2026-06-20T10:35:21Z'
-    hota: 57.029399517025105
+    fps: 9.953160035912795
+    updated: '2026-06-20T11:37:55Z'
+    hota: 57.18667924905853
 combined:
-  hota: 51.62476621260842
+  hota: 49.174940051249855
