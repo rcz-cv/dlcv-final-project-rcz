@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from typing import Any
 
 from pathlib import Path
-import cv2
 import numpy as np
 import torch
 from ultralytics import YOLO
@@ -26,8 +25,8 @@ class YOLOdetector:
     where x/y/w/h are in MOT format.
     """
 
-    model_name: str = "yolo26m.pt"
-    min_confidence: float = 0.25
+    model_name: str | None = None
+    min_confidence: float | None = None
     iou_threshold: float = 0.45
     min_detection_height: int | None = None
     device: str | None = None

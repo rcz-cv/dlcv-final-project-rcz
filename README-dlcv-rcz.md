@@ -166,6 +166,11 @@ bash run_eval.sh --tracker yolo26m-osnet_x1_0 --detector yolov5mu --reid osnet_x
 e.g.
 
 ```
-bash run_eval.sh --tracker yolov5mu-mars-mc35 --detector yolov5mu --min_confidence 0.35
+bash run_eval.sh --tracker yolov26mu-osnet_x1_0 --detector yolov26mu --reid osnet_x1_0
 ```
 
+Just update HOTA:
+```
+python update_hota.py --metadata_dir ./eval/trackers/DLCV/DLCV-train/yolo26m-osnet_x1_0/data
+```
+ 

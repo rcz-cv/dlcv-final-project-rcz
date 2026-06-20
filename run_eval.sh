@@ -65,3 +65,5 @@ python run_motchallenge.py --output_dir "${OUTPUT_DIR}" "$@"
         --DO_PREPROC False \
         --METRICS HOTA
 ) 2>&1 | tee eval/logs/trackeval_${TRACKER_NAME}_hota.log
+
+python update_hota.py  --metadata_dir "${OUTPUT_DIR}"

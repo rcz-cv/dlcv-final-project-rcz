@@ -132,12 +132,12 @@ class OSNetImageEncoder:
 @dataclass
 class OsnetReid:
     model_filename: str = "resources/networks/osnet_x1_0_market1501.pth.tar"
-    model_name: str = "osnet_x1_0"
+    model_name: str | None = None
     batch_size: int = 32
     device: str | None = None
     image_shape: tuple[int, int] = (256, 128)
     feature_dim: int = 512
-    use_detection_mask: bool = False
+    use_detection_mask: bool | None = None
     torchreid_root: str | Path | None = None
 
     def __post_init__(self) -> None:

@@ -113,7 +113,7 @@ class MarsReid:
     batch_size: int = 32
     input_name: str = "images"
     output_name: str = "features"
-    use_detection_mask: bool = False
+    use_detection_mask: bool | None = None
 
     def __post_init__(self) -> None:
         self.encoder = ImageEncoder(
