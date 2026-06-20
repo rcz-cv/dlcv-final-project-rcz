@@ -23,4 +23,4 @@ if [[ ! -d "${OSNET_DIR}" ]]; then
 fi
 
 # install OSNet dependencies in our current environment
-pip install torch torchvision yacs gdown scipy opencv-python tensorboard
+python -m pip install torch torchvision yacs gdown scipy opencv-python tensorboard

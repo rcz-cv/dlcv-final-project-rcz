@@ -59,6 +59,20 @@ python run_tracker.py \
     --display=True
 ```
 
+### Videos to Google Drive
+
+```
+# store to archive
+tar --no-xattrs -czf dlcv-final-project-videos.tar.gz videos/
+shasum -a 256 dlcv-final-project-videos.tar.gz
+# 56b276c25370eec2eb198b6273d16939fffac04fa5c9fd7ff8117215171b035e  dlcv-final-project-videos.tar.gz
+
+# https://drive.google.com/file/d/1ujjjDlQZ6eEfdfWqJx-L_pgbJkSqRkU8/view?usp=sharing
+
+# restore from archive
+tar xzf dlcv-final-project-videos.tar.gz
+```
+
 ### Create Detections
 
 The following example generates person re-identification features from standard MOT challenge
