@@ -229,7 +229,7 @@ if __name__ == "__main__":
         "identity_max_distance": 0.25,
         "min_majority_count": 1,
         "reset_conflicts": False,
-        "track_detection_iou": 0.1
+        "track_detection_iou": 0
     }
     parameters = DEFAULT_PARAMETERS.copy()
     parser = args_parser("Body ReID")

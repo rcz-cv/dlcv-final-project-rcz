@@ -58,28 +58,18 @@ class IdentityManager:
     def update(self, frame_idx, tracks, detections):
         self.current_frame_idx = frame_idx
 
-        unmatched_detection_indices = set(range(len(detections)))
-
         for track in tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
 
-            detection = self._best_detection_for_track(
-                track,
-                detections,
-                unmatched_detection_indices,
-            )
+            detection = self._best_detection_for_track(track, detections)
 
             if detection is None:
-                self._history(track.track_id).add(frame_idx, None)
                 continue
-
-            unmatched_detection_indices.discard(detection["_index"])
 
             feature = getattr(detection["detection"], "feature", None)
             if feature is None:
                 print(f"track {track.track_id}: matched detection has no feature")
-                self._history(track.track_id).add(frame_idx, None)
                 continue
 
             identity_id, distance = self.database.match(feature)
@@ -126,66 +116,80 @@ class IdentityManager:
 
         active_tracks = [
             track for track in tracks
-            if track.is_confirmed() and track.time_since_update <= 1
+            if track.is_confirmed() and track.time_since_update <= 0
         ]
 
         for track in active_tracks:
-            identity_id = getattr(track, "identity_id", None)
-            if identity_id is None:
-                continue
+            setattr(track, "identity_conflict", False)
 
-            identity_to_tracks.setdefault(identity_id, []).append(track)
+            identity_id = getattr(track, "identity_id", None)
+            if identity_id is not None:
+                identity_to_tracks.setdefault(identity_id, []).append(track)
 
         for identity_id, conflicting_tracks in identity_to_tracks.items():
             if len(conflicting_tracks) <= 1:
                 continue
 
-            if self.reset_conflicts:
-                for track in conflicting_tracks:
-                    setattr(track, "identity_id", None)
-                    self.track_identities[track.track_id] = None
-            else:
-                winner = max(
-                    conflicting_tracks,
-                    key=lambda t: getattr(t, "identity_vote_count", 0),
-                )
+            winner = max(
+                conflicting_tracks,
+                key=lambda t: (
+                    getattr(t, "identity_vote_count", 0),
+                    -float(getattr(t, "last_identity_distance", 999.0) or 999.0),
+                ),
+            )
 
-                for track in conflicting_tracks:
-                    if track is winner:
-                        continue
-                    setattr(track, "identity_id", None)
-                    self.track_identities[track.track_id] = None
-
+            for track in conflicting_tracks:
+                if track is not winner:
+                    setattr(track, "identity_conflict", True)
+ 
     def _history(self, track_id):
         if track_id not in self.histories:
             self.histories[track_id] = IdentityHistory(window=self.id_window)
         return self.histories[track_id]
 
-    def _best_detection_for_track(self, track, detections, allowed_indices):
-        if not allowed_indices:
+    def _best_detection_for_track(self, track, detections):
+        if not detections:
             return None
 
         track_box = track.to_tlwh()
+        tx, ty, tw, th = track_box
+        tcx = tx + tw / 2.0
+        tcy = ty + th / 2.0
 
         best = None
-        best_iou = 0.0
+        best_score = -1.0
 
-        for i in allowed_indices:
-            detection = detections[i]
+        for i, detection in enumerate(detections):
             detection_box = detection.tlwh
+            dx, dy, dw, dh = detection_box
+            dcx = dx + dw / 2.0
+            dcy = dy + dh / 2.0
 
             iou = tlwh_iou(track_box, detection_box)
 
-            if iou > best_iou:
-                best_iou = iou
+            center_distance = np.sqrt((tcx - dcx) ** 2 + (tcy - dcy) ** 2)
+            scale = max(th, dh, 1.0)
+            normalized_center_distance = center_distance / scale
+
+            center_score = max(0.0, 1.0 - normalized_center_distance)
+
+            # Prefer IoU, but allow center proximity to rescue mismatched box sizes.
+            score = max(iou, 0.5 * center_score)
+
+            if score > best_score:
+                best_score = score
                 best = {
                     "_index": i,
                     "detection": detection,
                     "iou": iou,
+                    "center_score": center_score,
+                    "score": score,
                 }
 
-        if best is None or best_iou < self.track_detection_iou:
+        if best is None:
+            return None
+
+        if best["iou"] < self.track_detection_iou and best["center_score"] < 0.4:
             return None
 
         return best
-    

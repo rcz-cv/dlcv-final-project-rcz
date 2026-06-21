@@ -143,15 +143,18 @@ class Visualization(object):
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
 
-            identity_id = getattr(track, "identity_id", None)
-
             self.viewer.color = create_unique_color_uchar(track.track_id)
+
+            identity_id = getattr(track, "identity_id", None)
+            conflict = getattr(track, "identity_conflict", False)
 
             if identity_id is None:
                 label = "T%s P?" % track.track_id
+            elif conflict:
+                label = "T%s P%s!" % (track.track_id, identity_id)
             else:
                 label = "T%s P%s" % (track.track_id, identity_id)
-
+    
             self.viewer.rectangle(
                 *track.to_tlwh().astype(np.int64),
                 label=label,
