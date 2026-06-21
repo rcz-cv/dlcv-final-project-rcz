@@ -1,6 +1,6 @@
-created: '2026-06-21T09:54:13Z'
+created: '2026-06-21T11:09:11Z'
 git:
-  commit: f7c6fae
+  commit: 05fba74
   dirty: true
 parameters:
   detector: yolo26m
@@ -10,15 +10,32 @@ parameters:
   nn_budget: 100
   max_age: 30
   mask: false
-  display: true
+  display: false
   min_detection_height: 0
   nms_max_overlap: 1.0
+  knn_k: 5
+  knn_min_votes: 1
   id_window: 30
   identity_max_distance: 0.25
   min_majority_count: 1
   reset_conflicts: false
   track_detection_iou: 0
 sequences:
+  KITTI-17:
+    fps: 8.440925245692771
+    updated: '2026-06-21T11:09:11Z'
   MOT16-09:
-    fps: 7.76401440237201
-    updated: '2026-06-21T10:20:17Z'
+    fps: 4.92692448591272
+    updated: '2026-06-21T11:10:54Z'
+  MOT16-11:
+    fps: 5.188805699132612
+    updated: '2026-06-21T11:13:49Z'
+  PETS09-S2L1:
+    fps: 6.430565300764938
+    updated: '2026-06-21T11:16:01Z'
+  TUD-Campus:
+    fps: 5.637645986499022
+    updated: '2026-06-21T11:16:14Z'
+  TUD-Stadtmitte:
+    fps: 6.0188360771727565
+    updated: '2026-06-21T11:16:43Z'

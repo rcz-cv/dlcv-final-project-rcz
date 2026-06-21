@@ -166,7 +166,7 @@ bash run_eval.sh --tracker yolo26m-osnet_x1_0 --detector yolov5mu --reid osnet_x
 e.g.
 
 ```
-bash run_eval.sh --tracker yolov26mu-osnet_x1_0 --detector yolov26mu --reid osnet_x1_0
+bash run_eval.sh --tracker yolo26m-osnet_x1_0 --detector yolo26m --reid osnet_x1_0
 ```
 
 Just update HOTA:
@@ -177,7 +177,7 @@ python update_hota.py --metadata_dir ./eval/trackers/DLCV/DLCV-train/yolo26m-osn
 ### Run Identity with osnet
 
 ```
-python run_tracker.py \
+python run_identity.py \
     --sequence_dir=./videos/MOT16-09 \
     --output_dir=./eval/trackers/DLCV/DLCV-train/BR-yolo26m-mars/data \
     --detector=yolo26m \
@@ -185,3 +185,5 @@ python run_tracker.py \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display=True
+
+bash run_eval.sh --tracker BR-yolo26m-mars --detector yolo26m --reid mars

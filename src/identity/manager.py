@@ -34,6 +34,8 @@ class IdentityManager:
     def __init__(
         self,
         *,
+        knn_k,
+        knn_min_votes,
         id_window,
         identity_max_distance,
         track_detection_iou,
@@ -44,6 +46,8 @@ class IdentityManager:
         self.database = IdentityDatabase(
             max_distance=identity_max_distance,
             max_features_per_identity=max_features_per_identity,
+            knn_k=knn_k,
+            knn_min_votes=knn_min_votes,
         )
 
         self.id_window = id_window

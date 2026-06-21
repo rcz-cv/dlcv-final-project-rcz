@@ -51,7 +51,7 @@ fi
 TRACKERS_DIR="${PROJECT_ROOT}/eval/trackers/DLCV"
 OUTPUT_DIR="${TRACKERS_DIR}/DLCV-train/${TRACKER_NAME}/data/"
 
-python run_motchallenge.py --output_dir "${OUTPUT_DIR}" "$@"
+python run_motchal_id.py --output_dir "${OUTPUT_DIR}" "$@"
 
 (
     cd ../TrackEval

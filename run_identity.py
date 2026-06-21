@@ -88,6 +88,8 @@ def run(sequence_dir, output_dir, parameters):
 
     detector, reid, tracker = create_pipeline(parameters)
     identity_manager = IdentityManager(
+        knn_k=parameters["knn_k"],
+        knn_min_votes=parameters["knn_min_votes"],
         id_window=parameters["id_window"],
         identity_max_distance=parameters["identity_max_distance"],
         track_detection_iou=parameters["track_detection_iou"],
@@ -156,9 +158,13 @@ def run(sequence_dir, output_dir, parameters):
         for track in tracker.tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
+            identity_id = getattr(track, "identity_id", None)
+            if identity_id is None:
+                continue
             bbox = track.to_tlwh()
             results.append([
-                frame_idx, track.track_id, bbox[0], bbox[1], bbox[2], bbox[3]])
+                frame_idx, identity_id, bbox[0], bbox[1], bbox[2], bbox[3],
+            ])
 
     # Run tracker.
     if parameters["display"]:
@@ -186,20 +192,30 @@ def run(sequence_dir, output_dir, parameters):
 
 def add_parser(parser):
     parser.add_argument(
-        "--id_window", help="Identity stability vs. responsiveness.",
+        "--knn_k", help="Number of nearest gallery descriptors used for KNN identity voting.",
         type=str)
     parser.add_argument(
-        "--identity_max_distance", help="Identity assignment threshold.",
+        "--knn_min_votes", help="KNN votes required to assign an existing identity.",
         type=str)
     parser.add_argument(
-        "--min_majority_count", help="Transient identity suppression.",
+        "--id_window", help="Number of recent frames used for identity majority voting.",
         type=str)
     parser.add_argument(
-        "--reset_conflicts", help="True to reset on conflicts.",
+        "--identity_max_distance", help="Maximum cosine distance for matching a descriptor to an existing identity.",
+        type=str)
+    parser.add_argument(
+        "--min_majority_count", help="Minimum votes required before an identity becomes active for a track.",
+        type=str)
+    parser.add_argument(
+        "--reset_conflicts", help="Reset conflicting identity assignments instead of marking conflicts.",
         type=bool_string)
 
 
 def add_parameters(args, parameters):
+    if args.knn_k is not None:
+        parameters["knn_k"] = args.knn_k
+    if args.knn_min_votes is not None:
+        parameters["knn_min_votes"] = args.knn_min_votes
     if args.id_window is not None:
         parameters["id_window"] = args.id_window
     if args.identity_max_distance is not None:
@@ -225,6 +241,8 @@ if __name__ == "__main__":
         "min_detection_height": 0,
         "nms_max_overlap": 1.0,
     # identity:
+        "knn_k": 5,
+        "knn_min_votes": 1,
         "id_window": 30,
         "identity_max_distance": 0.25,
         "min_majority_count": 1,
