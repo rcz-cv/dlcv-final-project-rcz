@@ -1,0 +1,29 @@
+{
+  "sequence": "MOT16-09",
+  "parameters": {
+    "reid": "osnet_x0_75",
+    "identity_max_distance": 0.22,
+    "max_features_per_identity": 100,
+    "knn_k": 1,
+    "knn_min_votes": 1,
+    "min_crop_width": 4.0,
+    "min_crop_height": 8.0,
+    "gt_require_marked": false,
+    "gt_min_visibility": 0.0
+  },
+  "summary": {
+    "samples": 8830,
+    "skipped": 0,
+    "gt_identities": 43,
+    "predicted_identities": 54,
+    "elapsed_seconds": 93.52353333300562,
+    "samples_per_second": 94.41473910699419
+  },
+  "metrics": {
+    "fowlkes_mallows_pred_vs_gt": 0.44939249862406355,
+    "silhouette_pred_cosine": 0.03463566675782204,
+    "silhouette_gt_cosine": 0.0356471985578537,
+    "calinski_harabasz_pred": 67.62927937669767,
+    "calinski_harabasz_gt": 99.92443742222042
+  }
+}

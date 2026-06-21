@@ -92,9 +92,8 @@ def run(sequence_dir, output_dir, parameters):
         knn_min_votes=parameters["knn_min_votes"],
         id_window=parameters["id_window"],
         identity_max_distance=parameters["identity_max_distance"],
-        track_detection_iou=parameters["track_detection_iou"],
         min_majority_count=parameters["min_majority_count"],
-        reset_conflicts=parameters["reset_conflicts"]
+        conflict_policy=parameters["conflict_policy"]
     )
 
     prev_time = time.perf_counter()
@@ -124,7 +123,7 @@ def run(sequence_dir, output_dir, parameters):
         tracker.predict()
         tracker.update(detections)
 
-        identity_manager.update(frame_idx, tracker.tracks, detections)
+        identity_manager.update(frame_idx, tracker.tracks,)
         identity_manager.resolve_active_track_identities(tracker.tracks)
         identity_manager.resolve_conflicts(tracker.tracks)
 
@@ -207,7 +206,7 @@ def add_parser(parser):
         "--min_majority_count", help="Minimum votes required before an identity becomes active for a track.",
         type=str)
     parser.add_argument(
-        "--reset_conflicts", help="Reset conflicting identity assignments instead of marking conflicts.",
+        "--conflict_policy", help="Resolve identity assignments with mark|reset|competitive policy.",
         type=bool_string)
 
 
@@ -222,8 +221,8 @@ def add_parameters(args, parameters):
         parameters["identity_max_distance"] = args.identity_max_distance
     if args.min_majority_count is not None:
         parameters["min_majority_count"] = args.min_majority_count
-    if args.reset_conflicts is not None:
-        parameters["reset_conflicts"] = args.reset_conflicts
+    if args.conflict_policy is not None:
+        parameters["conflict_policy"] = args.conflict_policy
     return parameters
 
 
@@ -246,8 +245,7 @@ if __name__ == "__main__":
         "id_window": 30,
         "identity_max_distance": 0.25,
         "min_majority_count": 1,
-        "reset_conflicts": False,
-        "track_detection_iou": 0
+        "conflict_policy": "competitive"
     }
     parameters = DEFAULT_PARAMETERS.copy()
     parser = args_parser("Body ReID")

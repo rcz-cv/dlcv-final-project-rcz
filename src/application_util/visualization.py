@@ -75,7 +75,7 @@ class NoVisualization(object):
     def draw_trackers(self, trackers):
         pass
 
-    def draw_identities(self, tracks):
+    def draw_detection_identities(self, detections):
         pass
 
     def run(self, frame_callback):
@@ -136,26 +136,20 @@ class Visualization(object):
             #                      label="%d" % track.track_id)
             #
 
-    def draw_identities(self, tracks):
+    def draw_detection_identities(self, detections):
         self.viewer.thickness = 2
 
-        for track in tracks:
-            if not track.is_confirmed() or track.time_since_update > 1:
-                continue
-
-            self.viewer.color = create_unique_color_uchar(track.track_id)
-
-            identity_id = getattr(track, "identity_id", None)
-            conflict = getattr(track, "identity_conflict", False)
-
+        for detection in detections:
+            identity_id = getattr(detection, "identity_id", None)
             if identity_id is None:
-                label = "T%s P?" % track.track_id
-            elif conflict:
-                label = "T%s P%s!" % (track.track_id, identity_id)
+                label = "P?"
+                color_tag = 0
             else:
-                label = "T%s P%s" % (track.track_id, identity_id)
-    
+                label = "P%s" % identity_id
+                color_tag = identity_id
+
+            self.viewer.color = create_unique_color_uchar(color_tag)
             self.viewer.rectangle(
-                *track.to_tlwh().astype(np.int64),
+                *np.asarray(detection.tlwh).astype(np.int64),
                 label=label,
             )

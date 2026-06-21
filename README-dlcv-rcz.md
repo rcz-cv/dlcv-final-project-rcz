@@ -30,6 +30,9 @@ pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim 
 ### Ultralytics
 pip install ultralytics
 
+### run_identity_metrics.py
+pip install scikit-learn
+
 ```
 
 ### Install resources
@@ -179,11 +182,34 @@ python update_hota.py --metadata_dir ./eval/trackers/DLCV/DLCV-train/yolo26m-osn
 ```
 python run_identity.py \
     --sequence_dir=./videos/MOT16-09 \
-    --output_dir=./eval/trackers/DLCV/DLCV-train/BR-yolo26m-mars/data \
-    --detector=yolo26m \
-    --reid=mars \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/BR-yolo26s-osnet_x1_0/data \
+    --detector=yolo26s \
+    --reid=osnet_x1_0 \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display=True
 
-bash run_eval.sh --tracker BR-yolo26m-mars --detector yolo26m --reid mars
+bash run_eval.sh --tracker BR-yolo26s-osnet_x1_0 --detector yolo26s --reid osnet_x1_0
+
+```
+python run_identity.py \
+    --sequence_dir=./videos/MOT16-09 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/BR-yolo26s-osnet_x0_75/data \
+    --detector=yolo26s \
+    --reid=osnet_x0_75 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display=True
+
+bash run_eval.sh --tracker BR-yolo26s-osnet_x0_75 --detector yolo26s --reid osnet_x0_75
+
+### Evaluate Identity
+
+```
+python run_identity_metrics.py \
+  --sequence_dir videos/MOT16-09 \
+  --output_dir eval/metrics/identity \
+  --reid osnet_x0_75 \
+  --knn_k 1 \
+  --identity_max_distance 0.22
+```

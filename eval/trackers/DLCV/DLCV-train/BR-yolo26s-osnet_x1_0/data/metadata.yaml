@@ -1,10 +1,10 @@
-created: '2026-06-21T15:59:32Z'
+created: '2026-06-21T16:05:06Z'
 git:
   commit: 917c520
   dirty: true
 parameters:
-  detector: yolo26m
-  reid: mars
+  detector: yolo26s
+  reid: osnet_x1_0
   min_confidence: 0.3
   max_cosine_distance: 0.2
   nn_budget: 100
@@ -21,5 +21,5 @@ parameters:
   conflict_policy: competitive
 sequences:
   MOT16-09:
-    fps: 6.028398300346924
-    updated: '2026-06-21T15:59:32Z'
+    fps: 8.985833683338496
+    updated: '2026-06-21T16:05:44Z'

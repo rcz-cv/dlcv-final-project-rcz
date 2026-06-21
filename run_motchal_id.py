@@ -83,8 +83,7 @@ def get_parameters(args):
         "id_window": 30,
         "identity_max_distance": 0.25,
         "min_majority_count": 1,
-        "reset_conflicts": False,
-        "track_detection_iou": 0
+        "conflict_policy": "competitive"
     }
     parameters = DEFAULT_PARAMETERS.copy()
     if args.detector is not None:
