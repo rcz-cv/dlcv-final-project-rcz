@@ -1,0 +1,24 @@
+created: '2026-06-21T09:22:32Z'
+git:
+  commit: 3bdebb5
+  dirty: true
+parameters:
+  detector: yolo26m
+  reid: mars
+  min_confidence: 0.3
+  max_cosine_distance: 0.2
+  nn_budget: 100
+  max_age: 30
+  mask: false
+  display: true
+  min_detection_height: 0
+  nms_max_overlap: 1.0
+  id_window: 30
+  identity_max_distance: 0.25
+  min_majority_count: 1
+  reset_conflicts: false
+  track_detection_iou: 0.1
+sequences:
+  MOT16-09:
+    fps: 7.788698197266069
+    updated: '2026-06-21T09:23:57Z'

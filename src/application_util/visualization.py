@@ -75,6 +75,9 @@ class NoVisualization(object):
     def draw_trackers(self, trackers):
         pass
 
+    def draw_identities(self, tracks):
+        pass
+
     def run(self, frame_callback):
         while self.frame_idx <= self.last_idx:
             frame_callback(self, self.frame_idx)
@@ -131,4 +134,25 @@ class Visualization(object):
                 *track.to_tlwh().astype(np.int64), label=str(track.track_id))
             # self.viewer.gaussian(track.mean[:2], track.covariance[:2, :2],
             #                      label="%d" % track.track_id)
-#
+            #
+
+    def draw_identities(self, tracks):
+        self.viewer.thickness = 2
+
+        for track in tracks:
+            if not track.is_confirmed() or track.time_since_update > 1:
+                continue
+
+            identity_id = getattr(track, "identity_id", None)
+
+            self.viewer.color = create_unique_color_uchar(track.track_id)
+
+            if identity_id is None:
+                label = "T%s P?" % track.track_id
+            else:
+                label = "T%s P%s" % (track.track_id, identity_id)
+
+            self.viewer.rectangle(
+                *track.to_tlwh().astype(np.int64),
+                label=label,
+            )

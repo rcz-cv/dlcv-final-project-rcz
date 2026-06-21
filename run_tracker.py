@@ -209,6 +209,28 @@ def make_output_dir(output_dir):
     candidate.mkdir(parents=True, exist_ok=True)
 
 
+def create_pipeline(parameters):
+    metric = nn_matching.NearestNeighborDistanceMetric(
+        "cosine",
+        parameters["max_cosine_distance"],
+        parameters["nn_budget"],
+    )
+    tracker = Tracker(metric, max_age=parameters["max_age"])
+
+    detector = detectors.create_detector(
+        parameters["detector"],
+        min_confidence=parameters["min_confidence"],
+        min_detection_height=parameters["min_detection_height"],
+    )
+
+    reid = reids.create_reid_detector(
+        parameters["reid"],
+        use_detection_mask=parameters["mask"],
+    )
+
+    return detector, reid, tracker
+
+
 def run(sequence_dir, output_dir, parameters):
     """
     Run multi-target tracker on a particular sequence.
@@ -253,22 +275,16 @@ def run(sequence_dir, output_dir, parameters):
 
     """
 
-    seq_info = gather_sequence_info(sequence_dir)
-    metric = nn_matching.NearestNeighborDistanceMetric(
-        "cosine", parameters["max_cosine_distance"], parameters["nn_budget"])
-    tracker = Tracker(metric, max_age=parameters["max_age"])
     results = []
 
-    detector = detectors.create_detector(parameters["detector"],
-        min_confidence=parameters["min_confidence"],
-        min_detection_height=parameters["min_detection_height"])
-    reid = reids.create_reid_detector(parameters["reid"], use_detection_mask=parameters["mask"])
-
+    seq_info = gather_sequence_info(sequence_dir)
     sequence_name = Path(sequence_dir).name
 
     make_output_dir(output_dir)
     output_file = str(Path(output_dir) / sequence_name) + ".txt"
     metadata_file = str(Path(output_dir) / "metadata.yaml")
+
+    detector, reid, tracker = create_pipeline(parameters)
 
     prev_time = time.perf_counter()
     fps = 0.0
@@ -360,14 +376,14 @@ def bool_string(input_string):
     else:
         return (input_string == "True")
 
-def parse_args():
-    """ Parse command line arguments.
+def args_parser(description):
+    """ Return parser for command line arguments.
     """
     if len(sys.argv) == 1:
         usage=argparse.SUPPRESS
     else:
         usage=None
-    parser = argparse.ArgumentParser(description="Deep SORT", usage=usage)
+    parser = argparse.ArgumentParser(description=description, usage=usage)
     parser.add_argument(
         "--sequence_dir", help="Path to MOTChallenge sequence directory",
         required=True)
@@ -408,28 +424,9 @@ def parse_args():
     parser.add_argument(
         "--nms_max_overlap",  help="Non-maximum suppression threshold: Maximum "
         "detection overlap.", default=None, type=float)
+    return parser
 
-    if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(0)
-
-    return parser.parse_args()
-
-def get_parameters(args):
-    DEFAULT_PARAMETERS = {
-        "detector": "yolo26m",
-        "reid": "mars",
-        "min_confidence": 0.30,
-        "max_cosine_distance": 0.2,
-        "nn_budget": 100,
-        "max_age": 30,
-        "mask": False,
-        "display": True,
-    # legacy:
-        "min_detection_height": 0,
-        "nms_max_overlap": 1.0
-    }
-    parameters = DEFAULT_PARAMETERS.copy()
+def get_parameters(args, parameters):
     if args.detector is not None:
         parameters["detector"] = args.detector
     if args.reid is not None:
@@ -455,6 +452,26 @@ def get_parameters(args):
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    parameters = get_parameters(args)
+    DEFAULT_PARAMETERS = {
+        "detector": "yolo26m",
+        "reid": "mars",
+        "min_confidence": 0.30,
+        "max_cosine_distance": 0.2,
+        "nn_budget": 100,
+        "max_age": 30,
+        "mask": False,
+        "display": True,
+    # legacy:
+        "min_detection_height": 0,
+        "nms_max_overlap": 1.0
+    }
+    parameters = DEFAULT_PARAMETERS.copy()
+    parser = args_parser("Deep SORT")
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
+    args = parser.parse_args()
+
+    parameters = get_parameters(args, parameters)
     run(args.sequence_dir, args.output_dir, parameters)

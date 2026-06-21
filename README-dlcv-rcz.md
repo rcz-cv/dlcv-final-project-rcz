@@ -174,3 +174,14 @@ Just update HOTA:
 python update_hota.py --metadata_dir ./eval/trackers/DLCV/DLCV-train/yolo26m-osnet_x1_0/data
 ```
  
+### Run Identity with osnet
+
+```
+python run_tracker.py \
+    --sequence_dir=./videos/MOT16-09 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/BR-yolo26m-mars/data \
+    --detector=yolo26m \
+    --reid=mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display=True
