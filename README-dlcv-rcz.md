@@ -59,7 +59,7 @@ python run_tracker.py \
     --sequence_dir=./videos/MOT16-09/ \
     --min_confidence=0.3 \
     --nn_budget=100 \
-    --display=True
+    --display
 ```
 
 ### Videos to Google Drive
@@ -119,7 +119,7 @@ python run_tracker.py \
     --sequence_dir=./videos/MOT16-09 \
     --min_confidence=0.3 \
     --nn_budget=100 \
-    --display=True
+    --display
 
 ### Run mot challenge
 
@@ -158,7 +158,7 @@ python run_tracker.py \
     --reid=osnet_x1_0 \
     --min_confidence=0.3 \
     --nn_budget=100 \
-    --display=True
+    --display
 
 bash run_eval.sh --tracker yolo26m-osnet_x1_0 --detector yolov5mu --reid osnet_x1_0 --min_confidence 0.35
 
@@ -187,7 +187,7 @@ python run_identity.py \
     --reid=osnet_x1_0 \
     --min_confidence=0.3 \
     --nn_budget=100 \
-    --display=True
+    --display
 
 bash run_eval.sh --tracker BR-yolo26s-osnet_x1_0 --detector yolo26s --reid osnet_x1_0
 
@@ -199,7 +199,7 @@ python run_identity.py \
     --reid=osnet_x0_75 \
     --min_confidence=0.3 \
     --nn_budget=100 \
-    --display=True
+    --display
 
 bash run_eval.sh --tracker BR-yolo26s-osnet_x0_75 --detector yolo26s --reid osnet_x0_75
 
@@ -212,6 +212,13 @@ python run_identity_metrics.py \
   --reid osnet_x0_75 \
   --knn_k 1 \
   --identity_max_distance 0.22
+
+bash scripts/run_eval_id.sh \
+    --tracker osnet_x0_75-k4-imax14 \
+    --reid osnet_x0_75 \
+    --knn_k 4 \
+    --identity_max_distance 0.14
+
 ```
 
 ### Run Tracker with gt_eval

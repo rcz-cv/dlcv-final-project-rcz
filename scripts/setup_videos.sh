@@ -5,7 +5,7 @@
 # This script populates the detections and eval folder with symlinks to the
 # video datasets after they are downloaded to the videos/ folder.
 #
-# Usage: bash ./videos/setup_videos.sh
+# Usage: bash scripts/setup_videos.sh
 #
 
 set -euo pipefail

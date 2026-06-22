@@ -17,8 +17,14 @@ import numpy as np
 
 sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
-from common import update_metadata, gather_sequence_info, make_output_dir
-from common import mot_gt_detections_for_frame, score_frame, detector_quality
+from common import (
+    update_metadata,
+    gather_sequence_info,
+    make_output_dir,
+    mot_gt_detections_for_frame,
+    score_frame,
+    detector_quality
+)
 
 import detectors
 import reids
@@ -340,7 +346,7 @@ def args_parser(description):
         default=None)
     parser.add_argument(
         "--gt_eval",
-        help="Evaluate Detector and ReID against ground truth",
+        help="Evaluate operation against ground truth",
         action=argparse.BooleanOptionalAction,
         default=None)
     parser.add_argument(

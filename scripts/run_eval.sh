@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-PROJECT_ROOT="$(pwd)"
+PROJECT_ROOT="$(cd ..; pwd)"
 
 TRACKEVAL_DIR="${PROJECT_ROOT}/external/trackeval"
 TRACKEVAL_VENV="${TRACKEVAL_DIR}/.venv"

@@ -5,10 +5,12 @@
 # This script populates the eval folder with symlinks to the video datasets,
 # allowing them to be be downloaded (and git-ignored) here in videos.
 #
-# Usage: bash ./videos/setup_eval.sh
+# Usage: bash scripts/setup_eval.sh
 #
 
 set -euo pipefail
+
+PROJECT_ROOT="$(cd ..; pwd)"
 
 CHALLENGE="DLCV"
 SPLIT="${CHALLENGE}-train"
@@ -28,8 +30,8 @@ TRACKERS=(
 
 echo "Populating eval directory structure..."
 
-GT_ROOT="eval/gt/DLCV"
-TRACKER_ROOT="eval/trackers/DLCV/${SPLIT}"
+GT_ROOT="${PROJECT_ROOT}/eval/gt/DLCV"
+TRACKER_ROOT="${PROJECT_ROOT}/eval/trackers/DLCV/${SPLIT}"
 
 mkdir -p "${GT_ROOT}/${SPLIT}"
 mkdir -p "${GT_ROOT}/seqmaps"
@@ -45,7 +47,7 @@ echo "name" > "${SEQMAP}"
 for VIDEO in "${VIDEOS[@]}"; do
     echo "Setting up ${VIDEO}..."
 
-    VIDEO_DIR="videos/${VIDEO}"
+    VIDEO_DIR="${PROJECT_ROOT}/videos/${VIDEO}"
 
     if [[ ! -d "${VIDEO_DIR}" ]]; then
         echo "ERROR: ${VIDEO_DIR} not found"

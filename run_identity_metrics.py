@@ -95,7 +95,7 @@ def clip_tlwh(tlwh, image_width, image_height):
     return np.asarray([x1, y1, x2 - x1, y2 - y1], dtype=np.float32)
 
 
-def gt_row_unusable(row, *, require_marked, min_visibility):
+def gt_row_unusable(row, *, require_marked):
     """
     Return reason string if a MOT-format GT row should not be used.
 
@@ -119,10 +119,6 @@ def gt_row_unusable(row, *, require_marked, min_visibility):
 
     if require_marked and len(row) >= 7 and row[6] <= 0:
         return "marked_ignore"
-
-    if min_visibility is not None and len(row) >= 9:
-        if row[8] < min_visibility:
-            return "below_min_visibility"
 
     return None
 
@@ -208,7 +204,6 @@ def evaluate(sequence_dir, output_dir, parameters):
             reason = gt_row_unusable(
                 row,
                 require_marked=parameters["gt_require_marked"],
-                min_visibility=parameters["gt_min_visibility"]
             )
             if reason:
                 skip_reasons[f"gt_{reason}"] += 1
@@ -272,6 +267,10 @@ def evaluate(sequence_dir, output_dir, parameters):
     print()
 
     if not features:
+        if skipped > 0:
+            print("\nSkip reasons:")
+            for reason, count in skip_reasons.most_common():
+                print(f"  {reason}: {count}")
         raise ValueError("No ReID features were collected. Check GT filters and sequence path.")
 
     features_np = np.vstack(features).astype(np.float32)
@@ -403,8 +402,7 @@ def main():
         "knn_min_votes": args.knn_min_votes,
         "min_crop_width": 4.0,
         "min_crop_height": 8.0,
-        "gt_require_marked": False,
-        "gt_min_visibility": 0.0,
+        "gt_require_marked": False
     }
 
     evaluate(args.sequence_dir, args.output_dir, parameters)

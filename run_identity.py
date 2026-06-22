@@ -18,14 +18,15 @@ sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
 from application_util import preprocessing
 from application_util import visualization
-from deep_sort import nn_matching
-from deep_sort.tracker import Tracker
 from identity import IdentityManager
 
-from run_tracker import (
-    gather_sequence_info,
-    make_output_dir,
+from common import (
     update_metadata,
+    gather_sequence_info,
+    make_output_dir
+)
+
+from run_tracker import (
     get_parameters,
     create_pipeline,
     args_parser
@@ -51,6 +52,26 @@ def run(sequence_dir, output_dir, parameters):
         Name of the detector model
     reid : str
         Name of the reid model
+    display : bool
+        If True, show visualization of intermediate tracking results.
+
+    Identity
+    ----------
+    knn_k : int
+        Number of nearest gallery descriptors used for KNN identity voting.
+    knn_min_votes : int
+        KNN votes required to assign an existing identity.
+    id_window : int
+        Number of recent frames used for identity majority voting.
+    identity_max_distance : float
+        Maximum cosine distance for matching a descriptor to an existing identity.
+    min_majority_count : int
+        Minimum votes required before an identity becomes active for a track.
+    conflict_policy : str
+        Resolve identity assignments with mark|reset|competitive policy.
+
+    Tracking
+    ----------
     min_confidence : float
         Detection confidence threshold. Disregard all detections that have
         a confidence lower than this value.
@@ -63,8 +84,6 @@ def run(sequence_dir, output_dir, parameters):
         Gating threshold for cosine distance metric (object appearance).
     mask : boolean
         Specify to apply the segmentation mask (if any) before ReID.
-    display : bool
-        If True, show visualization of intermediate tracking results.
 
     Legacy Parameters
     -----------------
@@ -73,7 +92,6 @@ def run(sequence_dir, output_dir, parameters):
     min_detection_height : int
         Detection height threshold. Disregard all detections that have
         a height lower than this value.
-
     """
 
     results = []
@@ -191,19 +209,19 @@ def run(sequence_dir, output_dir, parameters):
 def add_parser(parser):
     parser.add_argument(
         "--knn_k", help="Number of nearest gallery descriptors used for KNN identity voting.",
-        type=str)
+        type=int)
     parser.add_argument(
         "--knn_min_votes", help="KNN votes required to assign an existing identity.",
-        type=str)
+        type=int)
     parser.add_argument(
         "--id_window", help="Number of recent frames used for identity majority voting.",
-        type=str)
+        type=int)
     parser.add_argument(
         "--identity_max_distance", help="Maximum cosine distance for matching a descriptor to an existing identity.",
-        type=str)
+        type=float)
     parser.add_argument(
         "--min_majority_count", help="Minimum votes required before an identity becomes active for a track.",
-        type=str)
+        type=int)
     parser.add_argument(
         "--conflict_policy", help="Resolve identity assignments with mark|reset|competitive policy.",
         type=str)
