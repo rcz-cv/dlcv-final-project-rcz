@@ -29,7 +29,6 @@ import reids
 from application_util import preprocessing
 from application_util import visualization
 from deep_sort import nn_matching
-from deep_sort.detection import Detection
 from deep_sort.tracker import Tracker
 
 
@@ -156,6 +155,7 @@ def gather_sequence_info(sequence_dir):
     groundtruth_file = os.path.join(sequence_dir, "gt/gt.txt")
     if os.path.exists(groundtruth_file):
         groundtruth = np.loadtxt(groundtruth_file, delimiter=',')
+        groundtruth = np.atleast_2d(groundtruth)
     else:
         raise ValueError(f"Ground truth file not found: {groundtruth_file}")
 
@@ -185,6 +185,31 @@ def gather_sequence_info(sequence_dir):
         "update_ms": update_ms
     }
     return seq_info
+
+
+def mot_gt_detections_for_frame(seq_info, frame_idx):
+    groundtruth = seq_info["groundtruth"]
+    frame_rows = groundtruth[groundtruth[:, 0].astype(int) == frame_idx]
+
+    detections = []
+    for row in frame_rows:
+        _, track_id, x, y, w, h, mark, class_id, visibility = row[:9]
+
+        if int(mark) != 1:
+            continue
+
+        det = Detection(
+            x=float(x),
+            y=float(y),
+            w=float(w),
+            h=float(h),
+            confidence=1.0,
+            class_id=int(class_id)
+        )
+        det.gt_track_id = int(track_id)
+        detections.append(det)
+
+    return detections
 
 
 def make_output_dir(output_dir):
@@ -229,6 +254,150 @@ def create_pipeline(parameters):
     )
 
     return detector, reid, tracker
+
+
+def score_frame(gt_detections, pred_detections, iou_threshold):
+    """
+    Generate TP/FP/FN scoring for GT vs our detector predictions
+    """
+    def tlwh_iou(a, b):
+        ax1, ay1, aw, ah = a
+        bx1, by1, bw, bh = b
+        ax2, ay2 = ax1 + aw, ay1 + ah
+        bx2, by2 = bx1 + bw, by1 + bh
+
+        ix1, iy1 = max(ax1, bx1), max(ay1, by1)
+        ix2, iy2 = min(ax2, bx2), min(ay2, by2)
+
+        iw, ih = max(0, ix2 - ix1), max(0, iy2 - iy1)
+        inter = iw * ih
+        union = aw * ah + bw * bh - inter
+        return inter / union if union > 0 else 0.0
+
+    gt_boxes = [d.tlwh for d in gt_detections]
+    pred_boxes = [d.tlwh for d in pred_detections]
+
+    matched_gt = set()
+    matched_pred = set()
+
+    pairs = []
+    for gi, gt in enumerate(gt_boxes):
+        for pi, pred in enumerate(pred_boxes):
+            pairs.append((tlwh_iou(gt, pred), gi, pi))
+
+    pairs.sort(reverse=True)
+
+    for iou, gi, pi in pairs:
+        if iou < iou_threshold:
+            break
+        if gi in matched_gt or pi in matched_pred:
+            continue
+        matched_gt.add(gi)
+        matched_pred.add(pi)
+
+    tp = len(matched_gt)
+    fp = len(pred_boxes) - tp
+    fn = len(gt_boxes) - tp
+    return tp, fp, fn
+
+
+def detector_quality(detector_stats):
+    tp = detector_stats["tp"]
+    fp = detector_stats["fp"]
+    fn = detector_stats["fn"]
+
+    precision = tp / (tp + fp) if tp + fp > 0 else 0.0
+    recall = tp / (tp + fn) if tp + fn > 0 else 0.0
+    f1 = (
+        2 * precision * recall / (precision + recall)
+        if precision + recall > 0 else 0.0
+    )
+    return {
+        "iou_threshold": detector_stats["gt_iou_threshold"],
+        "precision": precision,
+        "recall": recall,
+        "tp": tp,
+        "fp": fp,
+        "fn": fn,
+        "f1": f1
+    }
+
+
+class EvalTrack:
+    """
+    Trivial tracker to use GT as our results
+    """
+    def __init__(self, track_id, tlwh):
+        self.track_id = int(track_id)
+        self._tlwh = np.asarray(tlwh, dtype=float)
+        self.time_since_update = 0
+
+    def is_confirmed(self):
+        return True
+
+    def to_tlwh(self):
+        return self._tlwh
+
+
+class ReidIdentityAssigner:
+    def __init__(self, max_cosine_distance=0.2, nn_budget=100):
+        self.max_cosine_distance = max_cosine_distance
+        self.nn_budget = nn_budget
+        self.next_id = 1
+        self.galleries = {}  # track_id -> list of feature vectors
+
+    def update(self, detections):
+        assigned_ids = []
+        used_ids = set()
+
+        for detection in detections:
+            feature = np.asarray(detection.feature, dtype=np.float32)
+
+            best_id = None
+            best_distance = float("inf")
+
+            for track_id, gallery in self.galleries.items():
+                if track_id in used_ids:
+                    continue
+
+                distance = self._nearest_cosine_distance(feature, gallery)
+
+                if distance < best_distance:
+                    best_distance = distance
+                    best_id = track_id
+
+            if best_id is None or best_distance > self.max_cosine_distance:
+                best_id = self.next_id
+                self.next_id += 1
+                self.galleries[best_id] = []
+
+            self.galleries[best_id].append(feature)
+
+            if self.nn_budget is not None:
+                self.galleries[best_id] = self.galleries[best_id][-self.nn_budget:]
+
+            assigned_ids.append(best_id)
+            used_ids.add(best_id)
+
+        return assigned_ids
+
+    def _nearest_cosine_distance(self, feature, gallery):
+        feature = self._normalize(feature)
+
+        distances = []
+        for gallery_feature in gallery:
+            gallery_feature = self._normalize(gallery_feature)
+            cosine_similarity = np.dot(feature, gallery_feature)
+            cosine_distance = 1.0 - cosine_similarity
+            distances.append(cosine_distance)
+
+        return min(distances) if distances else float("inf")
+
+    def _normalize(self, feature):
+        norm = np.linalg.norm(feature)
+        if norm == 0:
+            return feature
+        return feature / norm
 
 
 def run(sequence_dir, output_dir, parameters):
@@ -288,6 +457,14 @@ def run(sequence_dir, output_dir, parameters):
 
     prev_time = time.perf_counter()
     fps = 0.0
+    detector_stats = {"tp": 0, "fp": 0, "fn": 0,
+        "gt_iou_threshold": parameters["gt_iou_threshold"]}
+
+    if parameters["gt_eval"]:
+        reid_identity_assigner = ReidIdentityAssigner(
+            max_cosine_distance=parameters["max_cosine_distance"],
+            nn_budget=parameters["nn_budget"],
+        )
 
     def frame_callback(vis, frame_idx):
         nonlocal prev_time,fps
@@ -299,19 +476,42 @@ def run(sequence_dir, output_dir, parameters):
             print(f"WARNING: could not read frame: {image_filename}")
             return
 
-        detections = detector.detect(frame)
-        detections = reid.reid(frame, detections)
+        our_detections = detector.detect(frame)
 
-        # Run non-maximum suppression.
-        boxes = np.array([d.tlwh for d in detections])
-        scores = np.array([d.confidence for d in detections])
-        indices = preprocessing.non_max_suppression(
-            boxes, parameters["nms_max_overlap"], scores)
-        detections = [detections[i] for i in indices]
+        if parameters["gt_eval"]:                                   # evaluating detector/reid independently
+            gt_detections = mot_gt_detections_for_frame(seq_info, frame_idx)
 
-        # Update tracker.
-        tracker.predict()
-        tracker.update(detections)
+            tp, fp, fn = score_frame(
+                gt_detections,
+                our_detections,
+                parameters["gt_iou_threshold"],
+            )
+            detector_stats["tp"] += tp
+            detector_stats["fp"] += fp
+            detector_stats["fn"] += fn
+
+            detections = gt_detections
+            detections = reid.reid(frame, detections)
+            assigned_ids = reid_identity_assigner.update(gt_detections)
+
+            active_tracks = [
+                EvalTrack(track_id, detection.tlwh)
+                for detection, track_id in zip(gt_detections, assigned_ids)
+            ]
+        else:
+            detections = our_detections                             # running actual tracker...
+
+            # Run non-maximum suppression on our detections
+            boxes = np.array([d.tlwh for d in detections])
+            scores = np.array([d.confidence for d in detections])
+            indices = preprocessing.non_max_suppression(
+                boxes, parameters["nms_max_overlap"], scores)
+            detections = [detections[i] for i in indices]
+            detections = reid.reid(frame, detections)
+
+            tracker.predict()
+            tracker.update(detections)
+            active_tracks = tracker.tracks
 
         # Update speed metric.
         now = time.perf_counter()
@@ -337,10 +537,10 @@ def run(sequence_dir, output_dir, parameters):
             )
             vis.set_image(image.copy())
             vis.draw_detections(detections)
-            vis.draw_trackers(tracker.tracks)
+            vis.draw_trackers(active_tracks)
 
-        # Store results.
-        for track in tracker.tracks:
+        # add results
+        for track in active_tracks:
             if not track.is_confirmed() or track.time_since_update > 1:
                 continue
             bbox = track.to_tlwh()
@@ -364,17 +564,14 @@ def run(sequence_dir, output_dir, parameters):
     sequence_stats= {
         "fps": fps
     }
+    if parameters["gt_eval"]:
+        sequence_stats["det_stats"] = detector_quality(detector_stats)
+    
     update_metadata(metadata_file,
         parameters=parameters,
         sequence_name=sequence_name,
         sequence_stats=sequence_stats
     )
-
-def bool_string(input_string):
-    if input_string not in {"True","False"}:
-        raise ValueError("Please Enter a valid Ture/False choice")
-    else:
-        return (input_string == "True")
 
 def args_parser(description):
     """ Return parser for command line arguments.
@@ -411,10 +608,17 @@ def args_parser(description):
         "it is deleted. If None, the default is 30.", type=int, default=30)
     parser.add_argument(
         "--mask", help="Apply mask before ReID for segmentation detectors",
-        default=None, type=bool_string)
+        action=argparse.BooleanOptionalAction,
+        default=None)
+    parser.add_argument(
+        "--gt_eval",
+        help="Evaluate Detector and ReID against ground truth",
+        action=argparse.BooleanOptionalAction,
+        default=None)
     parser.add_argument(
         "--display", help="Show intermediate tracking results",
-        default=None, type=bool_string)
+        action=argparse.BooleanOptionalAction,
+        default=None)
 
     # legacy parameters
     parser.add_argument(
@@ -441,6 +645,8 @@ def get_parameters(args, parameters):
         parameters["max_age"] = args.max_age
     if args.mask is not None:
         parameters["mask"] = args.mask
+    if args.gt_eval is not None:
+        parameters["gt_eval"] = args.gt_eval
     if args.display is not None:
         parameters["display"] = args.display
     # legacy:
@@ -460,6 +666,8 @@ if __name__ == "__main__":
         "nn_budget": 100,
         "max_age": 30,
         "mask": False,
+        "gt_eval": False,
+        "gt_iou_threshold": 0.5,
         "display": True,
     # legacy:
         "min_detection_height": 0,

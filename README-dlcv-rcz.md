@@ -213,3 +213,26 @@ python run_identity_metrics.py \
   --knn_k 1 \
   --identity_max_distance 0.22
 ```
+
+### Run Tracker with gt_eval
+
+```
+python run_tracker.py \
+    --gt_eval \
+    --sequence_dir=./videos/MOT16-11 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/yolo26m-osnet_x1_0-eval/data \
+    --detector=yolo26m \
+    --reid=osnet_x1_0 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display
+
+bash run_eval.sh \
+    --tracker yolo26m-osnet_x1_0-eval \
+    --detector yolo26s \
+    --reid osnet_x1_0 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --gt_eval
+```
+

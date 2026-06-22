@@ -5,12 +5,6 @@ import sys
 import run_identity
 
 
-def bool_string(input_string):
-    if input_string not in {"True","False"}:
-        raise ValueError("Please Enter a valid Ture/False choice")
-    else:
-        return (input_string == "True")
-
 def parse_args():
     """ Parse command line arguments.
     """
@@ -43,10 +37,12 @@ def parse_args():
         "it is deleted. If None, the default is 30.", type=int, default=30)
     parser.add_argument(
         "--mask", help="Apply mask before ReID for segmentation detectors",
-        default=None, type=bool_string)
+        action=argparse.BooleanOptionalAction,
+        default=None)
     parser.add_argument(
         "--display", help="Show intermediate tracking results",
-        default=None, type=bool_string)
+        action=argparse.BooleanOptionalAction,
+        default=None)
 
     # legacy parameters
     parser.add_argument(

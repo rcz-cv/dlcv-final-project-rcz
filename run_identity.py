@@ -28,8 +28,7 @@ from run_tracker import (
     update_metadata,
     get_parameters,
     create_pipeline,
-    args_parser,
-    bool_string
+    args_parser
 )
 
 
@@ -207,7 +206,7 @@ def add_parser(parser):
         type=str)
     parser.add_argument(
         "--conflict_policy", help="Resolve identity assignments with mark|reset|competitive policy.",
-        type=bool_string)
+        type=str)
 
 
 def add_parameters(args, parameters):

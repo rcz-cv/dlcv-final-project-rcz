@@ -30,7 +30,7 @@ sys.path.append(str(Path(__file__).resolve().parent / "src"))
 
 import reids
 from identity.database import IdentityDatabase, normalize_feature
-from run_tracker import gather_sequence_info, bool_string
+from run_tracker import gather_sequence_info
 
 from collections import Counter
 

@@ -51,7 +51,15 @@ fi
 TRACKERS_DIR="${PROJECT_ROOT}/eval/trackers/DLCV"
 OUTPUT_DIR="${TRACKERS_DIR}/DLCV-train/${TRACKER_NAME}/data/"
 
-python run_motchal_id.py --output_dir "${OUTPUT_DIR}" "$@"
+for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; do
+    echo "========== Processing "${VIDEO}" =========="
+    python run_tracker.py \
+        --sequence_dir=./videos/"${VIDEO}" \
+        --output_dir "${OUTPUT_DIR}" \
+        --no-display \
+        "$@"
+done
+echo "-------------------------------------------"
 
 (
     cd ../TrackEval
