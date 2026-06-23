@@ -56,7 +56,11 @@ The following example runs the tracker against one of the MOT16 sequences:
 
 ```
 python run_tracker.py \
-    --sequence_dir=./videos/MOT16-09/ \
+    --gt_eval \
+    --sequence_dir=./videos/MOT16-09 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/temporary/data \
+    --detector=mot16 \
+    --reid=mars \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display
@@ -118,7 +122,6 @@ bash track_eval.sh
 python run_tracker.py \
     --sequence_dir=./videos/MOT16-09 \
     --min_confidence=0.3 \
-    --nn_budget=100 \
     --display
 
 ### Run mot challenge
@@ -146,6 +149,22 @@ for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; d
         --detection_file="resources/detections/mars-small128/yolov5mu.pt-mars-off/${VIDEO}.npy" \
         --output_file="eval/trackers/DLCV/DLCV-train/yolov5mu.pt-mars-off/data/${VIDEO}.txt"
 done
+```
+
+### Run Tracker with mot16-mars baseline
+
+```
+python run_tracker.py \
+    --sequence_dir=./videos/MOT16-09 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/mot16-mars/data \
+    --detector=mot16 \
+    --reid=mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display
+
+bash scripts/run_eval.sh --tracker mot16-mars --detector mot16 --reid mars --min_confidence=0.3
+
 ```
 
 ### Run Tracker with osnet
@@ -243,3 +262,34 @@ bash run_eval.sh \
     --gt_eval
 ```
 
+### Run baseline Tracker with gt_eval
+
+```
+python run_tracker.py \
+    --gt_eval \
+    --sequence_dir=./videos/MOT16-11 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/mot16-mars-gteval/data \
+    --detector=mot16 \
+    --reid=mars \
+    --min_confidence=0.3 \
+    --display
+
+bash run_eval.sh \
+    --tracker mot16-mars-gteval \
+    --detector mot16 \
+    --reid mars \
+    --min_confidence=0.3 \
+    --gt_eval
+```
+
+
+### debugging
+
+python run_tracker.py \
+    --sequence_dir=./videos/PETS09-S2L1 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/mot16-mars-pets/data \
+    --detector=mot16 \
+    --reid=mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display

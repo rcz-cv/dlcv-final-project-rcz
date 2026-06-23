@@ -13,4 +13,8 @@ def create_detector(name: str, **kwargs):
         else:
             from .yolo import YOLOdetector
             return YOLOdetector(model_name=name, **kwargs)
+        
+    if name == "mot16":
+        from .mot16 import MOT16detector
+        return MOT16detector(model_name=name, **kwargs)
     raise ValueError(f"Unknown detector: {name}")

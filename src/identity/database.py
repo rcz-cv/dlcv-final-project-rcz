@@ -118,9 +118,8 @@ class IdentityDatabase:
         identity_ids = []
 
         for identity_id, cluster in self.clusters.items():
-            for feature in cluster.features:
-                features.append(feature)
-                identity_ids.append(identity_id)
+            features.append(cluster.centroid)
+            identity_ids.append(identity_id)
 
         if not features:
             return np.empty((0, 0), dtype=np.float32), []

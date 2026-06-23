@@ -146,6 +146,11 @@ def gather_sequence_info(sequence_dir):
     else:
         raise ValueError(f"Ground truth file not found: {groundtruth_file}")
 
+    det_file = os.path.join(sequence_dir, "det/det.txt")
+    if os.path.exists(det_file):
+        detections = np.loadtxt(det_file, delimiter=',')
+        detections = np.atleast_2d(detections)
+
     image = cv2.imread(next(iter(image_filenames.values())),
                         cv2.IMREAD_GRAYSCALE)
     image_size = image.shape
@@ -171,6 +176,9 @@ def gather_sequence_info(sequence_dir):
         "max_frame_idx": max_frame_idx,
         "update_ms": update_ms
     }
+    if detections is not None:
+       seq_info["detections"] = detections
+
     return seq_info
 
 
@@ -209,11 +217,13 @@ def make_output_dir(output_dir):
     try:
         rel = candidate.relative_to(OUTPUT_DIR_ROOT)
     except ValueError:
+        print("specified output directory:", output_dir)
         raise ValueError(
             f"Output directory must be under {OUTPUT_DIR_ROOT}"
         )
     parts = rel.parts
     if len(parts) != 2 or parts[1] != "data":
+        print("specified output directory:", output_dir)
         raise ValueError(
             "Output directory must have form "
             "'eval/trackers/DLCV/DLCV-train/<tracker-name>/data'"

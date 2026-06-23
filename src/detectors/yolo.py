@@ -47,7 +47,7 @@ class YOLOdetector:
     def name(self) -> str:
         return self.model_name
 
-    def detect(self, bgr_image: np.ndarray) -> list[Detection]:
+    def detect(self, bgr_image: np.ndarray, frame_idx) -> list[Detection]:
         if bgr_image is None:
             raise ValueError("bgr_image is None")
 

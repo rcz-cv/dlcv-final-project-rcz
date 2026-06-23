@@ -27,6 +27,7 @@ from common import (
 )
 
 import detectors
+from detectors import Detector
 import reids
 
 from application_util import preprocessing
@@ -43,7 +44,7 @@ def create_pipeline(parameters):
     )
     tracker = Tracker(metric, max_age=parameters["max_age"])
 
-    detector = detectors.create_detector(
+    detector: Detector = detectors.create_detector(
         parameters["detector"],
         min_confidence=parameters["min_confidence"],
         min_detection_height=parameters["min_detection_height"],
@@ -74,7 +75,7 @@ class EvalTrack:
 
 
 class ReidIdentityAssigner:
-    def __init__(self, max_cosine_distance=0.2, nn_budget=100):
+    def __init__(self, max_cosine_distance, nn_budget):
         self.max_cosine_distance = max_cosine_distance
         self.nn_budget = nn_budget
         self.next_id = 1
@@ -188,6 +189,8 @@ def run(sequence_dir, output_dir, parameters):
     metadata_file = str(Path(output_dir) / "metadata.yaml")
 
     detector, reid, tracker = create_pipeline(parameters)
+    if hasattr(detector, "sequence"):
+        detector.sequence(seq_info)                                 # for MOT16 detector, or ignored
 
     prev_time = time.perf_counter()
     fps = 0.0
@@ -210,7 +213,7 @@ def run(sequence_dir, output_dir, parameters):
             print(f"WARNING: could not read frame: {image_filename}")
             return
 
-        our_detections = detector.detect(frame)
+        our_detections = detector.detect(frame, frame_idx)
 
         if parameters["gt_eval"]:                                   # evaluating detector/reid independently
             gt_detections = mot_gt_detections_for_frame(seq_info, frame_idx)
@@ -395,9 +398,9 @@ if __name__ == "__main__":
     DEFAULT_PARAMETERS = {
         "detector": "yolo26m",
         "reid": "mars",
-        "min_confidence": 0.30,
+        "min_confidence": 0.3,
         "max_cosine_distance": 0.2,
-        "nn_budget": 100,
+        "nn_budget": None,
         "max_age": 30,
         "mask": False,
         "gt_eval": False,

@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-PROJECT_ROOT="$(cd ..; pwd)"
+PROJECT_ROOT="$(pwd)"
 
 TRACKEVAL_DIR="${PROJECT_ROOT}/external/trackeval"
 TRACKEVAL_VENV="${TRACKEVAL_DIR}/.venv"
@@ -74,4 +74,4 @@ echo "-------------------------------------------"
         --METRICS HOTA
 ) 2>&1 | tee eval/logs/trackeval_${TRACKER_NAME}_hota.log
 
-python update_hota.py  --metadata_dir "${OUTPUT_DIR}"
+python scripts/update_hota.py  --metadata_dir "${OUTPUT_DIR}"
