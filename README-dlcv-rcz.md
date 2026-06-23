@@ -22,10 +22,10 @@ Python 3.12.12
 pip install --upgrade pip 
 
 ### x86/CUDA
-pip install numpy opencv-python scipy tensorflow tf-slim tf-keras
+python3.12 -m pip install numpy opencv-python scipy tensorflow tf-slim tf-keras
 
 ### AppleSilicon
-pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim tf-keras
+python3.12 -m pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim tf-keras
 
 ### For yolov5:
 pip install torch
@@ -85,7 +85,7 @@ detections. We apply it to our new videos:
 python tools/generate_detections.py \
     --model resources/networks/mars-small128/mars-small128.pb \
     --mot_dir videos \
-    --output_dir resources/detections/mars-small128/DLCV
+    --output_dir resources/detections/mars-small128/original/
 ```
 
 #### After creating detections, run the tracker against them:
@@ -94,7 +94,8 @@ python tools/generate_detections.py \
 for VIDEO in KITTI-17 MOT16-09 MOT16-11 PETS09-S2L1 TUD-Campus TUD-Stadtmitte; do
     python deep_sort_app.py \
         --sequence_dir="videos/${VIDEO}" \
-        --detection_file="resources/detections/mars-small128/DLCV/${VIDEO}.npy" \
+        --min_confidence 0.3 \
+        --detection_file="resources/detections/mars-small128/original/${VIDEO}.npy" \
         --output_file="eval/trackers/DLCV/DLCV-train/deep_sort_baseline/data/${VIDEO}.txt"
 done
 ```
