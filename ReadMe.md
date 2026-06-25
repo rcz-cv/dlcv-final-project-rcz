@@ -10,7 +10,7 @@
 
 **NOTE:**
 
-* For Google Colab, please clone the repo and open `final-project.ipynb` there.
+* For Google Colab, please open `final-project.ipynb` from `https://github.com/rcz-cv/dlcv-final-project-rcz`.
 * For use on the local computer, please follow the instructions below.
 
 
