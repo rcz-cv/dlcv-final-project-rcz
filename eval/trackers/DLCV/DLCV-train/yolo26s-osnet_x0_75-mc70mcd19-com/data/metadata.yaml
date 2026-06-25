@@ -1,0 +1,44 @@
+created: '2026-06-25T08:52:23Z'
+git:
+  commit: cb4b184
+  dirty: true
+parameters:
+  detector: yolo26s
+  reid: osnet_x0_75
+  min_confidence: 0.7
+  max_cosine_distance: 0.19
+  nn_budget: 100
+  max_age: 30
+  mask: false
+  gt_eval: false
+  gt_iou_threshold: 0.5
+  display: false
+  min_detection_height: 0
+  nms_max_overlap: 1.0
+sequences:
+  KITTI-17:
+    fps: 22.96618986757715
+    updated: '2026-06-25T08:52:23Z'
+    hota: 56.373248749233326
+  MOT16-09:
+    fps: 11.001534196063927
+    updated: '2026-06-25T08:53:24Z'
+    hota: 41.8294037299783
+  MOT16-11:
+    fps: 14.631097060846631
+    updated: '2026-06-25T08:54:59Z'
+    hota: 48.939835592597596
+  PETS09-S2L1:
+    fps: 10.948212250656526
+    updated: '2026-06-25T08:56:17Z'
+    hota: 55.32181228155372
+  TUD-Campus:
+    fps: 20.596663183658748
+    updated: '2026-06-25T08:56:28Z'
+    hota: 48.84431097030835
+  TUD-Stadtmitte:
+    fps: 11.994804023782173
+    updated: '2026-06-25T08:56:49Z'
+    hota: 52.59663415510604
+combined:
+  hota: 49.5291552469477
