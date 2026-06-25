@@ -26,7 +26,7 @@ if [[ ! -d "${TRACKEVAL_DIR}" ]]; then
     )
 fi
 
-if [[ ! -x "${TRACKEVAL_PY}" ]]; then
+if [[ ! -x "${TRACKEVAL_PY}" && -z "${COLAB_RELEASE_TAG:-}" ]]; then
     echo "Creating TrackEval virtual environment..."
     python3 -m venv "${TRACKEVAL_VENV}"
 

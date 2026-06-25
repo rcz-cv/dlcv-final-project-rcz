@@ -6,29 +6,6 @@ import numpy as np
 import cv2
 import time
 
-import cv2
-import sys
-
-# 1. Determine the environment
-if 'google.colab' in sys.modules:
-    print("Using Google Colab viewer, --display may be used.")
-    from google.colab.patches import cv2_imshow
-    def show_image(window_name, img):
-        cv2_imshow(img)                 # Colab ignores the window name parameter
-    def wait_key(remaining_time):
-        None
-    def stop_showing(window_name, img):
-        None
-else:
-    def show_image(window_name, img):
-        cv2.imshow(window_name, img)
-    def wait_key(remaining_time):
-        return cv2.waitKey(remaining_time)
-    def stop_showing(window_name, img):
-        cv2.destroyWindow(window_name)
-        cv2.waitKey(1)
-        cv2.imshow(window_name, img)
-
 
 def is_in_bounds(mat, roi):
     """Check if ROI is fully contained in the image.
@@ -331,9 +308,9 @@ class ImageViewer(object):
                         cv2.resize(self.image, self._window_shape))
             t1 = time.time()
             remaining_time = max(1, int(self._update_ms - 1e3*(t1-t0)))
-            show_image(
+            cv2.imshow(
                 self._caption, cv2.resize(self.image, self._window_shape[:2]))
-            key = wait_key(remaining_time)
+            key = cv2.waitKey(remaining_time)
             if key & 255 == 27:  # ESC
                 print("\nterminating")
                 self._terminate = True
@@ -351,7 +328,9 @@ class ImageViewer(object):
         #
         # see https://github.com/Itseez/opencv/issues/4535
         self.image[:] = 0
-        stop_showing(self._caption, self.image)
+        cv2.destroyWindow(self._caption)
+        cv2.waitKey(1)
+        cv2.imshow(self._caption, self.image)
 
     def stop(self):
         """Stop the control loop.
