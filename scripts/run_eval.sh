@@ -97,9 +97,11 @@ echo "-------------------------------------------"
 
 (
     cd external/trackeval
-    source .venv/bin/activate
+    if [[ ! -n "${COLAB_RELEASE_TAG:-}" ]]; then
+        source .venv/bin/activate
+    fi
 
-    MPLBACKEND=Agg .venv/bin/python scripts/run_mot_challenge.py \
+    MPLBACKEND=Agg python scripts/run_mot_challenge.py \
         --GT_FOLDER "${PROJECT_ROOT}/eval/gt/DLCV" \
         --TRACKERS_FOLDER "${TRACKERS_DIR}" \
         --BENCHMARK DLCV \
