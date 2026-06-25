@@ -11,6 +11,7 @@ import sys
 
 # 1. Determine the environment
 if 'google.colab' in sys.modules:
+    print("Using Google Colab viewer, --display may be used.")
     from google.colab.patches import cv2_imshow
     def show_image(window_name, img):
         cv2_imshow(img)                 # Colab ignores the window name parameter

@@ -13,13 +13,16 @@
 * For Google Colab, please clone the repo and open `final-project.ipynb` there.
 * For use on the local computer, please follow the instructions below.
 
-**First:**
 
-1. Clone the repo into a local `project-folder`
-2. **cd** `project-folder`
+### 1. Get the Repo
+
+```
+git clone -b online https://github.com/rcz-cv/dlcv-final-project-rcz.git
+cd dlcv-final-project-rcz
+```
 
 
-### 1. Python Requirements
+### 2. Python Requirements
 
 ```
 python3.12 -m venv .venv
@@ -45,7 +48,7 @@ pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim 
 ```
 
 
-### 2. Install mars model
+### 3. Install mars model
 
 DeepSORT's baseline **mars** model is available on Google Drive [here](https://drive.google.com/file/d/1mye0DtoestFP9GqJp3ylSBVAXzFr0Mr_/view?usp=sharing)
 
