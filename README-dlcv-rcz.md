@@ -348,3 +348,141 @@ bash scripts/run_eval.sh \
     --gt_eval
 
 ```
+And parameter sweep of best detector models:
+
+```
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc2mcd16-rep \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.2 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.16 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc25mcd20-rep \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.25 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.2 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc35mcd24-rep \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.35 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.24 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc40mcd28-rep \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.4 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.28 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc45mcd22-rep \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.45 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.22 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc50mcd18-rep \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.50 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.18 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc70mcd19-rep \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.70 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.19 \
+    --gt_eval
+
+
+```
+### And now combined tracker scoring
+
+```
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x0_75-mc30mcd19-com \
+    --detector yolo26s \
+    --reid osnet_x0_75 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.19
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-mars-mc30mcd19-com \
+    --detector yolo26s \
+    --reid mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.19
+
+```
+
+### And segmentation models
+
+```
+bash scripts/run_eval.sh \
+    --tracker yolo26s-seg-mars-mc30mcd19-seg \
+    --detector yolo26s-seg \
+    --reid mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.19
+
+bash scripts/run_eval.sh \
+    --tracker yolo26m-seg-mars-mc30mcd19-seg \
+    --detector yolo26m-seg \
+    --reid mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.19
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-seg-mars-mc30mcd19mask-seg \
+    --detector yolo26s-seg \
+    --reid mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.19 \
+    --mask
+
+bash scripts/run_eval.sh \
+    --tracker yolo26m-seg-mars-mc30mcd19mask-seg \
+    --detector yolo26m-seg \
+    --reid mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --max_age=30 \
+    --max_cosine_distance=0.19 \
+    --mask
