@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-PROJECT_ROOT="$(cd ..; pwd)"
+PROJECT_ROOT="$(pwd)"
 
 OSNET_DIR="${PROJECT_ROOT}/external/deep-person-reid"
 

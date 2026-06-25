@@ -126,7 +126,7 @@ def run(sequence_dir, output_dir, parameters):
             print(f"WARNING: could not read frame: {image_filename}")
             return
 
-        detections = detector.detect(frame)
+        detections = detector.detect(frame, frame_idx)
         detections = reid.reid(frame, detections)
 
         # Run non-maximum suppression.

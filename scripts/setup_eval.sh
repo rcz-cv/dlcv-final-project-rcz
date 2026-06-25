@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-PROJECT_ROOT="$(cd ..; pwd)"
+PROJECT_ROOT="$(pwd)"
 
 CHALLENGE="DLCV"
 SPLIT="${CHALLENGE}-train"
