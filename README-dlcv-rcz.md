@@ -293,3 +293,58 @@ python run_tracker.py \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display
+
+### Report experiments
+
+Section 3.1 Person Detector Evaluation
+
+```
+bash scripts/run_eval.sh \
+    --tracker mot16-mars-rep \
+    --detector mot16 \
+    --reid mars \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolov5mu-osnet_x0_5-rep \
+    --detector yolov5mu \
+    --reid osnet_x0_5 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolov5lu-osnet_x0_75-rep \
+    --detector yolov5lu \
+    --reid osnet_x0_75 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26s-osnet_x1_0-rep \
+    --detector yolo26s \
+    --reid osnet_x1_0 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26m-osnet_x1_0-rep \
+    --detector yolo26m \
+    --reid osnet_x1_0 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --gt_eval
+
+bash scripts/run_eval.sh \
+    --tracker yolo26l-osnet_ain_x1_0-rep \
+    --detector yolo26l \
+    --reid osnet_ain_x1_0 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --gt_eval
+
+```
