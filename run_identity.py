@@ -118,7 +118,8 @@ def run(sequence_dir, output_dir, parameters):
 
     def frame_callback(vis, frame_idx):
         nonlocal prev_time,fps
-        print("Processing frame %05d\r" % frame_idx, end="")
+        eol = "\n" if frame_idx % 10 == 0 else ""
+        print("Processing frame %05d\r" % frame_idx, end=eol)
         # get our image
         image_filename = seq_info["image_filenames"][frame_idx]
         frame = cv2.imread(image_filename, cv2.IMREAD_COLOR)
