@@ -23,15 +23,49 @@ if [[ ! -d "${TRACKEVAL_DIR}" ]]; then
     (
         cd "${TRACKEVAL_DIR}"
         git checkout
+
+        # Apply patches
+        #
+        # The following patch to TrackEval fixes old numpy conventions
+        # that that are no longer supported in the current library.
+        # I can't BELIEVE that this is necessary. What a PITA.
+        #
+        python - <<'PY'
+from pathlib import Path
+
+old1 = "np.float"
+new1 = "float"
+old2 = "np.int"
+new2 = "int"
+
+p = Path("trackeval/datasets/mot_challenge_2d_box.py")
+text = p.read_text()
+if old1 in text or old2 in text:
+    text = text.replace(old1, new1)
+    text = text.replace(old2, new2)
+    p.write_text(text)
+    print("Patched TrackEval:mot_challenge_2d_box.py for numpy")
+
+p = Path("trackeval/metrics/hota.py")
+text = p.read_text()
+if old1 in text or old2 in text:
+    text = text.replace(old1, new1)
+    text = text.replace(old2, new2)
+    p.write_text(text)
+    print("Patched TrackEval:hota.py for numpy")
+PY
     )
 fi
 
 if [[ ! -x "${TRACKEVAL_PY}" && -z "${COLAB_RELEASE_TAG:-}" ]]; then
     echo "Creating TrackEval virtual environment..."
-    python3 -m venv "${TRACKEVAL_VENV}"
+    (
+        python3 -m venv "${TRACKEVAL_VENV}"
+        source .venv/bin/activate
 
-    "${TRACKEVAL_PY}" -m pip install --upgrade pip
-    "${TRACKEVAL_PY}" -m pip install numpy scipy pycocotools matplotlib opencv_python scikit_image pytest Pillow tqdm tabulate
+        "${TRACKEVAL_PY}" -m pip install --upgrade pip
+        "${TRACKEVAL_PY}" -m pip install numpy scipy pycocotools matplotlib opencv_python scikit_image pytest Pillow tqdm tabulate
+    )
 fi
 
 if [[ "$@" = "" ]]; then
@@ -62,7 +96,8 @@ done
 echo "-------------------------------------------"
 
 (
-    cd ../TrackEval
+    cd external/TrackEval
+    source .venv/bin/activate
 
     MPLBACKEND=Agg .venv/bin/python scripts/run_mot_challenge.py \
         --GT_FOLDER "${PROJECT_ROOT}/eval/gt/DLCV" \
