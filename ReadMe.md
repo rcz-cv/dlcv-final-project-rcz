@@ -1,16 +1,16 @@
 # DLCV Week 6 - Final Project
 
 **Improvements to the DeepSORT implementation**  
-**By Richard Zulch**
-**25-June-2026**
+**By Richard Zulch**  
+**25-June-2026**  
 
-**`ReadMe.md`**
+**`ReadMe.md`**  
 
 ## Installation & Preparation
 
 **NOTE:**
 
-* For Google Colab, please clone the repo and open the notebook there.
+* For Google Colab, please clone the repo and open `final-project.ipynb` there.
 * For use on the local computer, please follow the instructions below.
 
 **First:**
@@ -37,7 +37,7 @@ Python 3.12.12
 pip install --upgrade pip 
 
 ### x86/CUDA
-pip install numpy opencv-python scipy tensorflow tf-slim tf-keras torch
+pip install numpy opencv-python scipy tensorflow tf-slim tf-keras torch ultralytics scikit-learn
 
 ### AppleSilicon
 pip install tensorflow-macos tensorflow-metal numpy opencv-python scipy tf-slim tf-keras torch ultralytics scikit-learn
@@ -183,7 +183,7 @@ python run_identity.py \
     --display
 ```
 
-#### Experiment-6: Run Identity with mars on all videos
+#### Experiment-6: Run Identity with osnet_x1_0 on all videos
 
 ```
 bash scripts/run_eval.sh \
