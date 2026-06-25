@@ -158,12 +158,26 @@ python run_tracker.py \
     --display
 ```
 
-#### Experiment-4: Evaluate yolo26s and osnet_x0_75 ReID on groundtruth for video MOT16-11
+#### Experiment-4: Real-Time Tracker
+
+```
+python run_tracker.py \
+    --sequence_dir=./videos/MOT16-09 \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/experiment-4/data \
+    --detector=yolo26s \
+    --reid=osnet_x0_75 \
+    --min_confidence=0.3 \
+    --nn_budget=100 \
+    --display
+```
+
+
+#### Experiment-5: Evaluate yolo26s and osnet_x0_75 ReID on groundtruth for video MOT16-11
 
 ```
 python run_tracker.py \
     --sequence_dir=./videos/MOT16-11 \
-    --output_dir=./eval/trackers/DLCV/DLCV-train/experiment-4/data \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/experiment-5/data \
     --detector yolo26s \
     --reid osnet_x0_75 \
     --min_confidence=0.70 \
@@ -173,12 +187,12 @@ python run_tracker.py \
     --gt_eval
 ```
 
-#### Experiment-5: Run Identity with mars and display
+#### Experiment-6: Run Identity with mars and display
 
 ```
 python run_identity.py \
     --sequence_dir=./videos/MOT16-09 \
-    --output_dir=./eval/trackers/DLCV/DLCV-train/experiment-5/data \
+    --output_dir=./eval/trackers/DLCV/DLCV-train/experiment-6/data \
     --detector=yolo26s \
     --reid=mars \
     --min_confidence=0.3 \
@@ -186,7 +200,7 @@ python run_identity.py \
     --display
 ```
 
-#### Experiment-6: Run Identity metrics on a video
+#### Experiment-7: Run Identity metrics on a video
 
 ```
 python run_identity_metrics.py \
