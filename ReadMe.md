@@ -131,6 +131,10 @@ python run_tracker.py \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display
+
+# See output in:
+# eval/trackers/DLCV/DLCV-train/experiment-1/
+# eval/trackers/DLCV/DLCV-train/experiment-1/data/metadata.yaml
 ```
 
 #### Experiment-2: Run Tracker with osnet on all videos, HOTA output
@@ -141,6 +145,11 @@ bash scripts/run_eval.sh \
 	--detector yolov5mu \
 	--reid osnet_x1_0 \
 	--min_confidence 0.35
+
+# See output in:
+# eval/logs/trackeval_experiment-2_hota.log
+# eval/trackers/DLCV/DLCV-train/experiment-2/
+# eval/trackers/DLCV/DLCV-train/experiment-2/data/metadata.yaml
 ```
 
 #### Experiment-3: Run tracker with segmentation model on KITTI-17
@@ -156,19 +165,25 @@ python run_tracker.py \
     --max_age=30 \
     --max_cosine_distance=0.19 \
     --display
+
+# See output in:
+# eval/trackers/DLCV/DLCV-train/experiment-3
+# eval/trackers/DLCV/DLCV-train/experiment-3/data/metadata.yaml
 ```
 
-#### Experiment-4: Real-Time Tracker
+#### Experiment-4: Real-Time Tracker showing FPS over all videos
 
 ```
-python run_tracker.py \
-    --sequence_dir=./videos/MOT16-09 \
-    --output_dir=./eval/trackers/DLCV/DLCV-train/experiment-4/data \
-    --detector=yolo26s \
-    --reid=osnet_x0_75 \
-    --min_confidence=0.3 \
-    --nn_budget=100 \
-    --display
+bash scripts/run_eval.sh \
+	--tracker experiment-4 \
+	--detector yolo26s \
+	--reid osnet_x0_75 \
+    --min_confidence=0.3
+
+# See output in:
+# eval/logs/trackeval_experiment-4_hota.log
+# eval/trackers/DLCV/DLCV-train/experiment-4/
+# eval/trackers/DLCV/DLCV-train/experiment-4/data/metadata.yaml
 ```
 
 
@@ -176,7 +191,7 @@ python run_tracker.py \
 
 ```
 python run_tracker.py \
-    --sequence_dir=./videos/MOT16-11 \
+    --sequence_dir=./videos/TUD-Campus \
     --output_dir=./eval/trackers/DLCV/DLCV-train/experiment-5/data \
     --detector yolo26s \
     --reid osnet_x0_75 \
@@ -185,6 +200,10 @@ python run_tracker.py \
     --max_age=30 \
     --max_cosine_distance=0.19 \
     --gt_eval
+
+# See output in:
+# eval/trackers/DLCV/DLCV-train/experiment-5/
+# eval/trackers/DLCV/DLCV-train/experiment-5/data/metadata.yaml
 ```
 
 #### Experiment-6: Run Identity with mars and display
@@ -198,6 +217,10 @@ python run_identity.py \
     --min_confidence=0.3 \
     --nn_budget=100 \
     --display
+
+# See output in:
+# eval/trackers/DLCV/DLCV-train/experiment-4/
+# eval/trackers/DLCV/DLCV-train/experiment-4/data/metadata.yaml
 ```
 
 #### Experiment-7: Run Identity metrics on a video
@@ -209,4 +232,8 @@ python run_identity_metrics.py \
 	--reid osnet_x0_75 \
 	--knn_k 9 \
 	--identity_max_distance 0.27
+
+# See output in:
+# eval/metrics/identity/MOT16-11_identity_metrics.json
+# eval/metrics/identity/MOT16-11_identity_predictions.csv
 ```

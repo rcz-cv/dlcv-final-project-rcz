@@ -64,7 +64,7 @@ echo "-------------------------------------------"
 (
     cd ../TrackEval
 
-    .venv/bin/python scripts/run_mot_challenge.py \
+    MPLBACKEND=Agg .venv/bin/python scripts/run_mot_challenge.py \
         --GT_FOLDER "${PROJECT_ROOT}/eval/gt/DLCV" \
         --TRACKERS_FOLDER "${TRACKERS_DIR}" \
         --BENCHMARK DLCV \
@@ -72,6 +72,6 @@ echo "-------------------------------------------"
         --TRACKERS_TO_EVAL ${TRACKER_NAME} \
         --DO_PREPROC False \
         --METRICS HOTA
-) 2>&1 | tee eval/logs/trackeval_${TRACKER_NAME}_hota.log
+) 2>&1 | tee "${PROJECT_ROOT}/eval/logs/trackeval_${TRACKER_NAME}_hota.log"
 
 python scripts/update_hota.py  --metadata_dir "${OUTPUT_DIR}"

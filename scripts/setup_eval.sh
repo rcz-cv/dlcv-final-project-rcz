@@ -32,10 +32,13 @@ echo "Populating eval directory structure..."
 
 GT_ROOT="${PROJECT_ROOT}/eval/gt/DLCV"
 TRACKER_ROOT="${PROJECT_ROOT}/eval/trackers/DLCV/${SPLIT}"
+LOG_ROOT="${PROJECT_ROOT}/eval/logs"
+
 
 mkdir -p "${GT_ROOT}/${SPLIT}"
 mkdir -p "${GT_ROOT}/seqmaps"
 mkdir -p "${TRACKER_ROOT}"
+mkdir -p "${LOG_ROOT}"
 
 #
 # Create seqmap
