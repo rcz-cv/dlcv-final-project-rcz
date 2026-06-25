@@ -1,0 +1,28 @@
+{
+  "sequence": "MOT16-11",
+  "parameters": {
+    "reid": "mars",
+    "identity_max_distance": 0.14,
+    "max_features_per_identity": 100,
+    "knn_k": 4,
+    "knn_min_votes": 1,
+    "min_crop_width": 4.0,
+    "min_crop_height": 8.0,
+    "gt_require_marked": false
+  },
+  "summary": {
+    "samples": 10076,
+    "skipped": 0,
+    "gt_identities": 80,
+    "predicted_identities": 488,
+    "elapsed_seconds": 112.86775754200062,
+    "samples_per_second": 89.27261619644118
+  },
+  "metrics": {
+    "fowlkes_mallows_pred_vs_gt": 0.4497429522225814,
+    "silhouette_pred_cosine": 0.37208107113838196,
+    "silhouette_gt_cosine": 0.13680405914783478,
+    "calinski_harabasz_pred": 94.361769897989,
+    "calinski_harabasz_gt": 138.19649472878586
+  }
+}

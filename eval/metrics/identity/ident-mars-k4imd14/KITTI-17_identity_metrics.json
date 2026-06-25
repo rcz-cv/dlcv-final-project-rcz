@@ -1,0 +1,28 @@
+{
+  "sequence": "KITTI-17",
+  "parameters": {
+    "reid": "mars",
+    "identity_max_distance": 0.14,
+    "max_features_per_identity": 100,
+    "knn_k": 4,
+    "knn_min_votes": 1,
+    "min_crop_width": 4.0,
+    "min_crop_height": 8.0,
+    "gt_require_marked": false
+  },
+  "summary": {
+    "samples": 782,
+    "skipped": 0,
+    "gt_identities": 9,
+    "predicted_identities": 172,
+    "elapsed_seconds": 11.964726708014496,
+    "samples_per_second": 65.35878495880581
+  },
+  "metrics": {
+    "fowlkes_mallows_pred_vs_gt": 0.42339348154381795,
+    "silhouette_pred_cosine": 0.2573244869709015,
+    "silhouette_gt_cosine": 0.14720971882343292,
+    "calinski_harabasz_pred": 17.233864432380877,
+    "calinski_harabasz_gt": 52.29772897950374
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "sequence": "PETS09-S2L1",
+  "parameters": {
+    "reid": "mars",
+    "identity_max_distance": 0.14,
+    "max_features_per_identity": 100,
+    "knn_k": 4,
+    "knn_min_votes": 1,
+    "min_crop_width": 4.0,
+    "min_crop_height": 8.0,
+    "gt_require_marked": false
+  },
+  "summary": {
+    "samples": 4650,
+    "skipped": 0,
+    "gt_identities": 19,
+    "predicted_identities": 317,
+    "elapsed_seconds": 69.02321858302457,
+    "samples_per_second": 67.36863472118078
+  },
+  "metrics": {
+    "fowlkes_mallows_pred_vs_gt": 0.3997075468559506,
+    "silhouette_pred_cosine": 0.23411794006824493,
+    "silhouette_gt_cosine": 0.16385172307491302,
+    "calinski_harabasz_pred": 57.97099583137654,
+    "calinski_harabasz_gt": 305.3060220903166
+  }
+}
