@@ -96,7 +96,7 @@ done
 echo "-------------------------------------------"
 
 (
-    cd external/TrackEval
+    cd external/trackeval
     source .venv/bin/activate
 
     MPLBACKEND=Agg .venv/bin/python scripts/run_mot_challenge.py \
