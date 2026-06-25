@@ -32,7 +32,7 @@ class YOLOSegDetector:
 
     model_name: str | None = None
     min_confidence: float | None = None
-    iou_threshold: float | None = None
+    iou_threshold: float = 0.45
     min_detection_height: int | None = None
     device: str | None = None
 
