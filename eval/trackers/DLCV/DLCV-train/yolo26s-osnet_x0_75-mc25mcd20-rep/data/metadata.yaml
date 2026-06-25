@@ -1,0 +1,100 @@
+created: '2026-06-25T07:29:13Z'
+git:
+  commit: cb4b184
+  dirty: true
+parameters:
+  detector: yolo26s
+  reid: osnet_x0_75
+  min_confidence: 0.25
+  max_cosine_distance: 0.2
+  nn_budget: 100
+  max_age: 30
+  mask: false
+  gt_eval: true
+  gt_iou_threshold: 0.5
+  display: false
+  min_detection_height: 0
+  nms_max_overlap: 1.0
+sequences:
+  KITTI-17:
+    fps: 18.924205797921836
+    det_stats:
+      iou_threshold: 0.5
+      precision: 0.6215351812366737
+      recall: 0.8535871156661786
+      tp: 583
+      fp: 355
+      fn: 100
+      f1: 0.7193090684762492
+    updated: '2026-06-25T07:29:13Z'
+    hota: 89.14876350234886
+  MOT16-09:
+    fps: 6.165438792232145
+    det_stats:
+      iou_threshold: 0.5
+      precision: 0.7571743929359823
+      recall: 0.7177097203728362
+      tp: 3773
+      fp: 1210
+      fn: 1484
+      f1: 0.7369140624999999
+    updated: '2026-06-25T07:30:21Z'
+    hota: 63.004330107427364
+  MOT16-11:
+    fps: 2.7521717107905896
+    det_stats:
+      iou_threshold: 0.5
+      precision: 0.788891779396462
+      recall: 0.6611074776542403
+      tp: 6065
+      fp: 1623
+      fn: 3109
+      f1: 0.7193689953742143
+    updated: '2026-06-25T07:32:55Z'
+    hota: 88.21008805873382
+  PETS09-S2L1:
+    fps: 10.302331902065148
+    det_stats:
+      iou_threshold: 0.5
+      precision: 0.866982883068674
+      recall: 0.9392314566577301
+      tp: 4204
+      fp: 645
+      fn: 272
+      f1: 0.901662198391421
+    updated: '2026-06-25T07:34:03Z'
+    hota: 60.9387790637251
+  TUD-Campus:
+    fps: 18.568730753442264
+    det_stats:
+      iou_threshold: 0.5
+      precision: 0.6924829157175398
+      recall: 0.8467966573816156
+      tp: 304
+      fp: 135
+      fn: 55
+      f1: 0.761904761904762
+    updated: '2026-06-25T07:34:14Z'
+    hota: 84.20775659582101
+  TUD-Stadtmitte:
+    fps: 14.460899346086556
+    det_stats:
+      iou_threshold: 0.5
+      precision: 0.9354536950420954
+      recall: 0.8650519031141869
+      tp: 1000
+      fp: 69
+      fn: 156
+      f1: 0.8988764044943821
+    updated: '2026-06-25T07:34:33Z'
+    hota: 90.04177575627118
+combined:
+  hota: 77.24422943353485
+  det_stats:
+    iou_threshold: 0.5
+    tp: 15929
+    fp: 4037
+    fn: 5176
+    precision: 0.7978062706601222
+    recall: 0.7547500592276711
+    f1: 0.7756811375423047
