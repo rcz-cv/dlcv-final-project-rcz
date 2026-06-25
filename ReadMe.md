@@ -183,17 +183,7 @@ python run_identity.py \
     --display
 ```
 
-#### Experiment-6: Run Identity with osnet_x1_0 on all videos
-
-```
-bash scripts/run_eval.sh \
-	--tracker experiment-6 \
-	--detector yolov5mu \
-	--reid osnet_x1_0 \
-	--min_confidence 0.35
-```
-
-#### Experiment-7: Run Identity metrics on a video
+#### Experiment-6: Run Identity metrics on a video
 
 ```
 python run_identity_metrics.py \
